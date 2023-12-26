@@ -1,13 +1,13 @@
-const express = require("express");
+import express from "express";
 const productRouter = express.Router();
-const auth = require("../middlewares/auth");
-const { Product } = require("../models/product");
+import auth from "../middlewares/auth";
+import Product from "../models/product";
 
 productRouter.get("/api/products/", auth, async (req, res) => {
   try {
     const products = await Product.find({ category: req.query.category });
     res.json(products);
-  } catch (e) {
+  } catch (e:any) {
     res.status(500).json({ error: e.message });
   }
 });
@@ -21,36 +21,36 @@ productRouter.get("/api/products/search/:name", auth, async (req, res) => {
     });
 
     res.json(products);
-  } catch (e) {
+  } catch (e:any) {
     res.status(500).json({ error: e.message });
   }
 });
 
 // create a post request route to rate the product.
-productRouter.post("/api/rate-product", auth, async (req, res) => {
-  try {
-    const { id, rating } = req.body;
-    let product = await Product.findById(id);
-
-    for (let i = 0; i < product.ratings.length; i++) {
-      if (product.ratings[i].userId === req.user) {
-        product.ratings.splice(i, 1);
-        break;
-      }
-    }
-
-    const ratingSchema = {
-      userId: req.user,
-      rating,
-    };
-
-    product.ratings.push(ratingSchema);
-    product = await product.save();
-    res.json(product);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
+// productRouter.post("/api/rate-product", auth, async (req, res) => {
+//   try {
+//     const { id, rating } = req.body;
+//     let product = await Product.findById(id);
+//
+//     for (let i = 0; i < product.ratings.length; i++) {
+//       if (product.ratings[i].userId === req.user) {
+//         product.ratings.splice(i, 1);
+//         break;
+//       }
+//     }
+//
+//     const ratingSchema = {
+//       userId: req.user,
+//       rating,
+//     };
+//
+//     product.ratings.push(ratingSchema);
+//     product = await product.save();
+//     res.json(product);
+//   } catch (e) {
+//     res.status(500).json({ error: e.message });
+//   }
+// });
 
 productRouter.get("/api/deal-of-day", auth, async (req, res) => {
   try {
@@ -71,9 +71,9 @@ productRouter.get("/api/deal-of-day", auth, async (req, res) => {
     });
 
     res.json(products[0]);
-  } catch (e) {
+  } catch (e:any) {
     res.status(500).json({ error: e.message });
   }
 });
 
-module.exports = productRouter;
+export default productRouter;
