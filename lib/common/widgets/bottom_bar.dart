@@ -1,7 +1,9 @@
 import 'package:amazon_clone_tutorial/constants/global_variables.dart';
 import 'package:amazon_clone_tutorial/features/account/screens/account_screen.dart';
 import 'package:amazon_clone_tutorial/features/cart/screens/cart_screen.dart';
+import 'package:amazon_clone_tutorial/features/doctor/screens/doctor_category_list.dart';
 import 'package:amazon_clone_tutorial/features/home/screens/home_screen.dart';
+import 'package:amazon_clone_tutorial/features/telemedicine/screens/inbox.dart';
 import 'package:amazon_clone_tutorial/providers/user_provider.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,8 @@ class _BottomBarState extends State<BottomBar> {
   double bottomBarBorderWidth = 5;
 
   List<Widget> pages = [
+    const DoctorCategoryScreen(),
+    const InboxScreen(),
     const HomeScreen(),
     const AccountScreen(),
     const CartScreen(),
@@ -46,7 +50,7 @@ class _BottomBarState extends State<BottomBar> {
         iconSize: 28,
         onTap: updatePage,
         items: [
-          // HOME
+          // Doctor Category
           BottomNavigationBarItem(
             icon: Container(
               width: bottomBarWidth,
@@ -54,6 +58,47 @@ class _BottomBarState extends State<BottomBar> {
                 border: Border(
                   top: BorderSide(
                     color: _page == 0
+                        ? GlobalVariables.selectedNavBarColor
+                        : GlobalVariables.backgroundColor,
+                    width: bottomBarBorderWidth,
+                  ),
+                ),
+              ),
+              child: const Icon(
+                Icons.medical_services,
+              ),
+            ),
+            label: '',
+          ),
+          // Doctor Category
+          BottomNavigationBarItem(
+            icon: Container(
+              width: bottomBarWidth,
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: _page == 1
+                        ? GlobalVariables.selectedNavBarColor
+                        : GlobalVariables.backgroundColor,
+                    width: bottomBarBorderWidth,
+                  ),
+                ),
+              ),
+              child: const Icon(
+                Icons.inbox_outlined,
+              ),
+            ),
+            label: '',
+          ),
+
+          // HOME
+          BottomNavigationBarItem(
+            icon: Container(
+              width: bottomBarWidth,
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: _page == 2
                         ? GlobalVariables.selectedNavBarColor
                         : GlobalVariables.backgroundColor,
                     width: bottomBarBorderWidth,
@@ -73,7 +118,7 @@ class _BottomBarState extends State<BottomBar> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: _page == 1
+                    color: _page == 3
                         ? GlobalVariables.selectedNavBarColor
                         : GlobalVariables.backgroundColor,
                     width: bottomBarBorderWidth,
@@ -93,7 +138,7 @@ class _BottomBarState extends State<BottomBar> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: _page == 2
+                    color: _page == 4
                         ? GlobalVariables.selectedNavBarColor
                         : GlobalVariables.backgroundColor,
                     width: bottomBarBorderWidth,

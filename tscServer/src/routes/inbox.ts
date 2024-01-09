@@ -1,11 +1,13 @@
 import express from "express";
-
-const inboxRouter = express.Router();
 import auth from "../middlewares/auth";
 import Chat from "../models/chat";
 import mongoose from "mongoose";
-import Doctor from "../models/doctor";
 import User from "../models/user";
+import Appointment from "../models/appointment";
+import {MessageType} from "../models/message";
+import chat from "../models/chat";
+
+const inboxRouter = express.Router();
 
 inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
     const chats = await Chat.find({
@@ -13,78 +15,72 @@ inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
             {user_one: new mongoose.Types.ObjectId(req.user)},
             {user_two: new mongoose.Types.ObjectId(req.user)}
         ],
-    })
-    return res.send(chats);
-});
-inboxRouter.get("/telemedicine_api/get_appointment", auth, async (req, res) => {
-    if (!req.body.doctorId) return res.status(400).send("Doctor Id is required");
-    const {doctorId} = req.body;
-    let chat = await Chat.findOne({
+    });
+    const appointment_data = await Appointment.find({
         $or: [
-            {user_one: new mongoose.Types.ObjectId(req.user), user_two: new mongoose.Types.ObjectId(doctorId)},
-            {user_one: new mongoose.Types.ObjectId(doctorId), user_two: new mongoose.Types.ObjectId(req.user)}
-        ],
-    })
-    let [doctor_data, my_data] = await Promise.all([
-        User.findOne({
-            _id: doctorId
-        }).populate("doctor_data"),
-        User.findOne({
-            _id: req.user
+            {doctorId: req.user, isDone: false, shouldGetDoneWithin: {$gt: Date.now()}},
+            {userId: req.user, isDone: false, shouldGetDoneWithin: {$gt: Date.now()}}
+        ]
+    });
+    let chat_data = chats.map((chat) => {
+        let appointment = appointment_data.find((appointment) => {
+            return (appointment.doctorId == chat.user_one && appointment.userId == chat.user_two)
+                || (appointment.doctorId == chat.user_two && appointment.userId == chat.user_one)
         })
-    ])
-    if (!doctor_data) return res.status(400).send("Doctor not found");
-    if (!my_data) return res.status(500).send("Internal error");
-    if (!chat) {
-        chat = new Chat({
-            user_one: req.user,
-            user_two: doctorId,
-            messages: [],
-        })
-        await chat.save();
-        // if(doctor_data.doctor_data!==null&&doctor_data.doctor_data!==undefined){
-        //     doctor_data.doctor_data.
-        // }
-        // my_data.balance = my_data.balance - (!doctor_data.doctor_data)?0:doctor_data.doctor_data.fees;
-        // await my_data.save();
-        // doctor_data.balance = doctor_data.balance + doctor_data.fees;
-    }
-    return res.send(doctor_data);
+        return {
+            chat: chat,
+            appointment: appointment
+        }
+    });
+    return res.send(chats);
 });
 inboxRouter.get("/telemedicine_api/send_message", auth, async (req, res) => {
     if (!req.body.receiver || !req.body.message) return res.status(400).send("Receiver and message is required");
     const {receiver, message} = req.body;
-    let chat = await Chat.findOne({
-        $or: [
-            {user_one: req.user, user_two: receiver},
-            {user_one: receiver, user_two: req.user}
-        ]
-    })
-    if (!chat) {
-        chat = new Chat({
-            user_one: req.user,
-            user_two: receiver,
-            messages: [{
-                sender: req.user,
-                receiver: receiver,
-                type: "TEXT",
-                sentAt: Date.now(),
-                data: message
-            }],
-
-        })
-        await chat.save();
-    } else {
-        chat.messages.push({
-            sender: req.user,
-            receiver: receiver,
-            type: "TEXT",
-            sentAt: Date.now(),
-            data: message
-        })
-        await chat.save();
+    let messageType = MessageType.TEXT;
+    if (req.body.type) {
+        if (req.body.type === "VIDEO") {
+            messageType = MessageType.VIDEOCALL;
+        } else if (req.body.type === "MEDICINE") {
+            messageType = MessageType.MEDICINE;
+        }
     }
-    return res.send(chat);
+    if (req.user === receiver) return res.status(400).send("You cannot send message to yourself");
+    const [sender, receiver_data] = await Promise.all([
+        User.findOne({_id: req.user}),
+        User.findOne({_id: receiver})
+    ])
+    if (!receiver_data) return res.status(400).send("Receiver not found");
+    if (!sender) return res.status(400).send("Sender not found");
+    let [chat_data, appointment_data] = await Promise.all([
+        Chat.findOne({
+            $or: [
+                {user_one: req.user, user_two: receiver},
+                {user_one: receiver, user_two: req.user}
+            ]
+        }),
+        Appointment.findOne({
+            $or: [
+                {doctorId: receiver, userId: req.user, isDone: false, shouldGetDoneWithin: {$gt: Date.now()}},
+                {doctorId: req.user, userId: receiver, isDone: false, shouldGetDoneWithin: {$gt: Date.now()}}
+            ]
+        })
+    ])
+    if (!appointment_data) {
+        return res.status(400).send("There is no appointment between you and receiver");
+    }
+    if (!chat_data) {
+        return res.status(400).send("There is no chat between you and receiver");
+    }
+    chat_data.messages.push({
+        sender: req.user,
+        receiver: receiver,
+        type: messageType,
+        sentAt: Date.now(),
+        data: message
+    })
+    await chat_data.save();
+    return res.send(chat_data);
 });
 
 

@@ -38,6 +38,7 @@ authRouter.post("/api/signin", async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
+    // console.log(email, password, user);
     if (!user) {
       return res
         .status(400)
@@ -50,7 +51,8 @@ authRouter.post("/api/signin", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, "passwordKey");
-    res.json({ token, ...user });
+    // @ts-ignore
+    res.json({ token, ...user._doc });
   } catch (e:any) {
     res.status(500).json({ error: e.message });
   }

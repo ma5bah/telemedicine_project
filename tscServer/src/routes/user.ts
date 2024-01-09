@@ -129,5 +129,12 @@ userRouter.get("/api/orders/me", auth, async (req, res) => {
         res.status(500).json({error: e.message});
     }
 });
-
+userRouter.get("/api/get_all_user", auth, async (req, res) => {
+    try {
+        const users = await User.find();
+        return res.json(users);
+    } catch (e: any) {
+        return res.status(500).json({error: e.message});
+    }
+})
 export default userRouter;

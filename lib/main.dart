@@ -3,6 +3,7 @@ import 'package:amazon_clone_tutorial/constants/global_variables.dart';
 import 'package:amazon_clone_tutorial/features/admin/screens/admin_screen.dart';
 import 'package:amazon_clone_tutorial/features/auth/screens/auth_screen.dart';
 import 'package:amazon_clone_tutorial/features/auth/services/auth_service.dart';
+import 'package:amazon_clone_tutorial/providers/doctor_provider.dart';
 import 'package:amazon_clone_tutorial/providers/user_provider.dart';
 import 'package:amazon_clone_tutorial/router.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,9 @@ void main() {
     ChangeNotifierProvider(
       create: (context) => UserProvider(),
     ),
+    ChangeNotifierProvider(
+      create: (context) => DoctorSearchProvider(),
+    )
   ], child: const MyApp()));
 }
 
@@ -52,7 +56,7 @@ class _MyAppState extends State<MyApp> {
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
       home: Provider.of<UserProvider>(context).user.token.isNotEmpty
-          ? Provider.of<UserProvider>(context).user.type == 'user'
+          ? Provider.of<UserProvider>(context).user.type != 1
               ? const BottomBar()
               : const AdminScreen()
           : const AuthScreen(),

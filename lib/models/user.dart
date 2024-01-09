@@ -6,7 +6,7 @@ class User {
   final String email;
   final String password;
   final String address;
-  final String type;
+  final int type;
   final String token;
   final List<dynamic> cart;
 
@@ -61,7 +61,7 @@ class User {
     String? email,
     String? password,
     String? address,
-    String? type,
+    int? type,
     String? token,
     List<dynamic>? cart,
   }) {

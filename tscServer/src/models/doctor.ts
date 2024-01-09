@@ -1,31 +1,46 @@
 import mongoose, {Types} from "mongoose";
 import {userSchema} from "./user";
 import {messageSchema} from "./message";
+import {appointmentSchema} from "./appointment";
+
 
 const doctorSchema = new mongoose.Schema({
     userId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User' // This should match the model name of your User model
+    },
+    isOnline: {
+        type: Boolean,
         required: true,
+        default: false,
     },
     onConsultation: {
         type: Boolean,
         required: true,
         default: false,
     },
-    patient: {
+    withPatient: {
         type: String,
         required: false,
     },
-    waitingQueue: [String],
-    specialization: {
+    waitingQueue: [appointmentSchema],
+    image_url: {
         type: String,
         required: true,
     },
-    experience: {
-        type: Number,
+    speciality: {
+        type: String,
         required: true,
     },
-    qualification: {
+    degree: {
+        type: String,
+        required: true,
+    },
+    designation: {
+        type: String,
+        required: true,
+    },
+    workplace: {
         type: String,
         required: true,
     },

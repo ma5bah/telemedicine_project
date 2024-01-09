@@ -26,7 +26,7 @@ class AuthService {
         password: password,
         email: email,
         address: '',
-        type: '',
+        type: 0,
         token: '',
         cart: [],
       );
@@ -71,6 +71,7 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
+      print(res.body);
       httpErrorHandle(
         response: res,
         context: context,

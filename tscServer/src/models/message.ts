@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
 import {userSchema} from "./user";
-enum MessageType {
+
+export enum MessageType {
     TEXT,
-    MEDICINE,
     VIDEOCALL,
+    MEDICINE,
 }
+
 export const messageSchema = new mongoose.Schema({
     data: {
         type: String,

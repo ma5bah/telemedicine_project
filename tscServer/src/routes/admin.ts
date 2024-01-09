@@ -4,7 +4,24 @@ const adminRouter = express.Router();
 import admin from "../middlewares/admin";
 import Product from "../models/product";
 import Order from "../models/order";
+import User from "../models/user";
 
+adminRouter.post("/admin/add_balance", admin, async (req, res) => {
+    try {
+        const {user_id, amount} = req.body;
+        if (!user_id) throw new Error("user id is required")
+        if (!amount) throw new Error("amount is required")
+        if (!Number.isInteger(amount)) throw new Error("amount should be a number")
+        if (amount < 0) throw new Error("amount should be positive")
+        let user = await User.findById(user_id);
+        if (!user) throw new Error("user not found");
+        user.balance += amount;
+        user = await user.save();
+        res.json(user);
+    } catch (e: any) {
+        res.status(500).json({error: e.message});
+    }
+})
 // Add product
 adminRouter.post("/admin/add-product", admin, async (req, res) => {
     try {

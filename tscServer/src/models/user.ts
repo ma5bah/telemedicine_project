@@ -1,6 +1,13 @@
 import mongoose, {Types} from "mongoose";
 import {productSchema} from "./product";
 
+export enum UserType {
+    USER,
+    ADMIN,
+    DOCTOR,
+    SELLER
+}
+
 export const userSchema = new mongoose.Schema({
     name: {
         required: true,
@@ -28,8 +35,8 @@ export const userSchema = new mongoose.Schema({
         default: "",
     },
     type: {
-        type: String,
-        default: "user",
+        type: typeof UserType,
+        default: UserType.USER,
     },
     cart: [
         {
