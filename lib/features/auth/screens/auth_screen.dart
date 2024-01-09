@@ -45,7 +45,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void signInUser() {
     authService.signInUser(
-        context: context, email: "masbahuddin65@gmail.com", password: "Test@123"
+        context: context, email: "test1@gmail.com", password: "Test@123"
         // email: _emailController.text,
         // password: _passwordController.text,
         );

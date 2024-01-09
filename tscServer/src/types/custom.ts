@@ -2,3 +2,5 @@
 export type token = String;
 
 export type user = Number;
+
+export type type = Number;

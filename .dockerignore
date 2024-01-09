@@ -1,0 +1,33 @@
+node_modules
+.fvm
+
+# General
+.git
+.gitignore
+.dockerignore
+Dockerfile
+README.md
+
+# Dart/Flutter
+build/
+.dart_tool/
+.flutter-plugins
+.packages
+.pub-cache/
+.pub/
+.flutter-plugins-dependencies
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE specific
+.idea/
+*.iml
+
+# Log files
+*.log
+
+# Others
+temp/

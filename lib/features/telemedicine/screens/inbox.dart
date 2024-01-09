@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:amazon_clone_tutorial/constants/global_variables.dart';
 import 'package:amazon_clone_tutorial/features/telemedicine/widget/appointment_card.dart';
 import 'package:amazon_clone_tutorial/models/appointment.dart';
@@ -15,21 +17,21 @@ class InboxScreen extends StatefulWidget {
 
 class _InboxScreenState extends State<InboxScreen> {
   Future<List<Appointment>> fetchData(BuildContext context) async {
-    // Simulate fetching data from an API or database
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    // print("token " + );
+    // Simulate fetching data from an API or database
     final url = Uri.parse('$uri/telemedicine_api/inbox');
     final response = await http.get(url, headers: {
       'Content-Type': 'application/json',
       'x-auth-token': userProvider.user.token
     });
-    print("Hello========================");
-    print(response.body);
-    // final responseData = json.decode(response.body);
+    final responseData = json.decode(response.body);
 
-    // print(responseData);
+    print(responseData);
 
     return List.generate(10, (index) {
       return Appointment(
+        userId: index.toString(),
         doctorName: "Doctor $index",
         appointmentTime: "Appointment Time $index",
       );
@@ -54,7 +56,7 @@ class _InboxScreenState extends State<InboxScreen> {
         future: fetchData(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child:
                   CircularProgressIndicator(), // Show a loading indicator while fetching data
             );
@@ -63,7 +65,7 @@ class _InboxScreenState extends State<InboxScreen> {
               child: Text("Error: ${snapshot.error}"),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
+            return const Center(
               child: Text("No appointments available."),
             );
           } else {

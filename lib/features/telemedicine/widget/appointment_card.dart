@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 class AppointmentCard extends StatelessWidget {
   final Appointment appointment;
 
-  const AppointmentCard({required this.appointment});
+  const AppointmentCard({Key? key, required this.appointment})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,8 @@ class AppointmentCard extends StatelessWidget {
             InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const ChatScreen()));
+                    builder: (context) =>
+                        ChatScreen(appointment.userId, receiverId: '')));
               },
               child: const Icon(Icons.message),
             ),

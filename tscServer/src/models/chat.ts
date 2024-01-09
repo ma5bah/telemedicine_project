@@ -14,11 +14,13 @@ const chatSchema = new mongoose.Schema({
         default: false
     },
     user_one: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
     user_two: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
     messages: [messageSchema]

@@ -21,12 +21,14 @@ export const appointmentSchema = new mongoose.Schema({
         required: true,
     },
     userId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // This should match the model name of your User model
         required: true,
     },
     doctorId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Doctor' // This should match the model name of your Doctor model
+        ref: 'Doctor', // This should match the model name of your Doctor model
+        required: true,
     },
 });
 

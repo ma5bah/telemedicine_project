@@ -7,7 +7,8 @@ import {appointmentSchema} from "./appointment";
 const doctorSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User' // This should match the model name of your User model
+        ref: 'User', // This should match the model name of your User model
+        required: true,
     },
     isOnline: {
         type: Boolean,

@@ -3,12 +3,14 @@ import express from "express";
 const doctorRouter = express.Router();
 import auth from "../middlewares/auth";
 import Chat from "../models/chat";
-import mongoose from "mongoose";
+import mongoose, {Schema} from "mongoose";
 import Doctor from "../models/doctor";
 import User, {UserType} from "../models/user";
 import WaitingQueue from "../models/appointment";
 import Appointment from "../models/appointment";
 import admin from "../middlewares/admin";
+import message, {MessageType} from "../models/message";
+// import  from "mongodb";
 
 
 doctorRouter.post("/doctor_api/start_consult", auth, async (req, res) => {
@@ -17,7 +19,7 @@ doctorRouter.post("/doctor_api/start_consult", auth, async (req, res) => {
     })
     if (!doctor_profile) return res.status(400).send("Doctor not found");
     const list_of_patients = await WaitingQueue.find({
-        doctorId: doctor_profile._id,
+        doctorId: doctor_profile.userId,
         lastActive: {
             $lt: Date.now() - 2 * 60 * 1000
         }
@@ -165,10 +167,10 @@ doctorRouter.get("/doctor_api/get_user_online_list", auth, async (req, res) => {
 
 doctorRouter.post("/doctor_api/search_doctor_by_category", auth, async (req, res) => {
     const {category} = req.body;
-    if (!category) {
-        const doctor_data = await Doctor.find()
-        return res.send(doctor_data);
-    }
+    // if (!category) {
+    //     const doctor_data = await Doctor.find()
+    //     return res.send(doctor_data);
+    // }
     const regex = new RegExp(category, 'i') // i for case insensitive
     const doctor_data = await Doctor.find({
         speciality: {
@@ -218,13 +220,19 @@ doctorRouter.post("/doctor_api/create_appointment", auth, async (req, res) => {
 
     const [doctor_profile, user_data] = await Promise.all([
         Doctor.findOne({
-            userId: doctor_id
+            userId: doctor_id,
         }),
         User.findOne({
             _id: req.user
         })
-    ])
+    ]);
+
+    // console.log(await Doctor.findById(new Schema.ObjectId(doctor_id)));
     if (!doctor_profile) return res.status(400).send("Doctor not found");
+    // return res.send(doctor_profile);
+    // console.log(await Doctor.findOne({
+    //     userId: doctor_id
+    // }));
     if (!user_data) return res.status(400).send("User not found");
     if (doctor_profile.fees > user_data.balance) return res.status(400).send("Insufficient balance");
     const previous_appointent_data = await Appointment.findOne({
@@ -235,13 +243,13 @@ doctorRouter.post("/doctor_api/create_appointment", auth, async (req, res) => {
             $gt: Date.now()
         }
     });
-    if (previous_appointent_data) return res.status(200).json({
+    if (!!previous_appointent_data) return res.status(200).json({
         message: "You already have an appointment with this doctor",
         appointment_data: previous_appointent_data
     });
     const [appointment_data, doctor_user_profile] = await Promise.all([
         Appointment.create({
-            doctorId: doctor_profile._id,
+            doctorId: doctor_profile.userId,
             userId: req.user,
             isDone: false,
             shouldGetDoneWithin: Date.now() + 2 * 24 * 60 * 60 * 1000,
@@ -270,6 +278,13 @@ doctorRouter.post("/doctor_api/create_appointment", auth, async (req, res) => {
             messages: [],
         })
     }
+    chat.messages.push({
+        sender: doctor_profile.userId,
+        receiver: req.user,
+        data: "Appointment created",
+        type: MessageType.TEXT,
+        sentAt: Date.now(),
+    });
     await chat.save();
 
     return res.json({
