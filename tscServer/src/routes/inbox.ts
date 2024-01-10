@@ -57,12 +57,11 @@ inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
                 user_two: req.user
             }
         ).populate("user_one").populate("user_two");
+        console.log(chats);
+        return res.send(chats);
     }
-    console.log(chats);
 
 
-
-    return res.send(chat_data);
 });
 inboxRouter.get("/telemedicine_api/send_message", auth, async (req, res) => {
     if (!req.body.receiver || !req.body.message) return res.status(400).send("Receiver and message is required");

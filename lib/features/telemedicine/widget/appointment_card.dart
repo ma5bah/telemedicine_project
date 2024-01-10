@@ -12,16 +12,18 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: const Text("Doctor image"),
+        leading: Image.network(appointment.image_url),
         title: Row(
           children: [
-            Text(appointment.doctorName),
+            Expanded(
+              // Wrap this around the Text widget
+              child: Text(appointment.doctorName),
+            ),
             const SizedBox(width: 80),
             InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        ChatScreen(appointment.userId, receiverId: '')));
+                    builder: (context) => ChatScreen(receiver: appointment)));
               },
               child: const Icon(Icons.message),
             ),

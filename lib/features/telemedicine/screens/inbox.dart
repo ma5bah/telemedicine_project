@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class InboxScreen extends StatefulWidget {
+  static const String routeName = "/inbox_screen";
   const InboxScreen({Key? key}) : super(key: key);
 
   @override
@@ -26,16 +27,20 @@ class _InboxScreenState extends State<InboxScreen> {
       'x-auth-token': userProvider.user.token
     });
     final responseData = json.decode(response.body);
-
     print(responseData);
+    if (responseData.runtimeType == List) {
+      return List.generate(responseData.length, (index) {
+        return Appointment(
+          userId: userProvider.user.id,
+          doctorName: responseData[index]['user_one']["name"],
+          appointmentTime: "2021-09-01T12:00:00.000Z",
+          image_url: responseData[index]['user_one']["doctor_data"]
+              ["image_url"],
+        );
+      });
+    }
 
-    return List.generate(10, (index) {
-      return Appointment(
-        userId: index.toString(),
-        doctorName: "Doctor $index",
-        appointmentTime: "Appointment Time $index",
-      );
-    });
+    return [];
   }
 
   @override

@@ -1,4 +1,11 @@
+import 'dart:convert';
+
+import 'package:amazon_clone_tutorial/constants/global_variables.dart';
+import 'package:amazon_clone_tutorial/features/telemedicine/screens/inbox.dart';
+import 'package:amazon_clone_tutorial/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class DoctorDetailsScreen extends StatefulWidget {
   final String name;
@@ -7,9 +14,11 @@ class DoctorDetailsScreen extends StatefulWidget {
   final String speciality;
   final String designation;
   final String workplace;
+  final String id;
 
   const DoctorDetailsScreen(
       {Key? key,
+      required this.id,
       required this.name,
       required this.picture,
       required this.degree,
@@ -22,6 +31,31 @@ class DoctorDetailsScreen extends StatefulWidget {
 }
 
 class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
+  Future<void> createAppointment(BuildContext context, String doctorId) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final String apiUrl = "$uri/doctor_api/create_appointment";
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': userProvider.user.token
+      },
+      body: jsonEncode(<String, String>{
+        'doctor_id': doctorId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Handle successful response
+      print("Appointment created successfully");
+      var responseData = json.decode(response.body);
+      // Do something with responseData
+    } else {
+      // Handle error response
+      print("Failed to create appointment: ${response.body}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,13 +105,13 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
 
             const SizedBox(height: 100),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 print('Book Appointment');
-                // @TODO: Add booking appointment logic
-
-                // Add booking appointment logic
-                // Navigator.of(context).push(MaterialPageRoute(
-                //     builder: (context) => AppointmentTakingScreen()));
+                await createAppointment(context, widget.id);
+                Navigator.pushNamed(
+                  context,
+                  InboxScreen.routeName,
+                );
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue,

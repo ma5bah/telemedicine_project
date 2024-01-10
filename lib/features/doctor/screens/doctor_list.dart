@@ -112,6 +112,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                     return InkWell(
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => DoctorDetailsScreen(
+                          id: doctorList[index].userId,
                           name: doctorList[index].name,
                           picture: doctorList[index].image_url,
                           degree: doctorList[index].degree,
