@@ -17,7 +17,7 @@ class AppointmentCard extends StatelessWidget {
           children: [
             Expanded(
               // Wrap this around the Text widget
-              child: Text(appointment.doctorName),
+              child: Text(appointment.name),
             ),
             const SizedBox(width: 80),
             InkWell(

@@ -10,6 +10,7 @@ import WaitingQueue from "../models/appointment";
 import Appointment from "../models/appointment";
 import admin from "../middlewares/admin";
 import message, {MessageType} from "../models/message";
+import Message from "../models/message";
 // import  from "mongodb";
 
 
@@ -277,16 +278,19 @@ doctorRouter.post("/doctor_api/create_appointment", auth, async (req, res) => {
             user_two: req.user,
             messages: [],
         })
+        await chat.save();
     }
-    chat.messages.push({
+    const new_message = new Message({
         sender: doctor_profile.userId,
         receiver: req.user,
         data: "Appointment created",
         type: MessageType.TEXT,
         sentAt: Date.now(),
-    });
+    })
+    await new_message.save()
+    chat.messages.push(new_message._id);
+    // await chat.save();
     await chat.save();
-
     return res.json({
         message: "Appointment created successfully",
         appointment_data: appointment_data

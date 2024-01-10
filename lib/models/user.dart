@@ -1,12 +1,18 @@
 import 'dart:convert';
 
+enum UserType {
+  USER,
+  ADMIN,
+  DOCTOR,
+}
+
 class User {
   final String id;
   final String name;
   final String email;
   final String password;
   final String address;
-  final int type;
+  final UserType type;
   final String token;
   final List<dynamic> cart;
 
@@ -41,7 +47,7 @@ class User {
       email: map['email'] ?? '',
       password: map['password'] ?? '',
       address: map['address'] ?? '',
-      type: map['type'] ?? '',
+      type: convertStringToUserType(map['type']),
       token: map['token'] ?? '',
       cart: List<Map<String, dynamic>>.from(
         map['cart']?.map(
@@ -61,7 +67,7 @@ class User {
     String? email,
     String? password,
     String? address,
-    int? type,
+    UserType? type,
     String? token,
     List<dynamic>? cart,
   }) {
@@ -75,5 +81,18 @@ class User {
       token: token ?? this.token,
       cart: cart ?? this.cart,
     );
+  }
+}
+
+UserType convertStringToUserType(int userTypeString) {
+  switch (userTypeString) {
+    case 0:
+      return UserType.USER;
+    case 1:
+      return UserType.ADMIN;
+    case 2:
+      return UserType.DOCTOR;
+    default:
+      throw Exception('Invalid user type string: $userTypeString');
   }
 }

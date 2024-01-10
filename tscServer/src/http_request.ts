@@ -5,6 +5,7 @@ import data_json from "./data.json";
 import {throws} from "node:assert";
 import Doctor from "./models/doctor";
 import mongoose from "mongoose";
+import Message from "./models/message";
 
 
 const main = async () => {
@@ -23,18 +24,16 @@ const main = async () => {
         // const email = doc_data.name.replace(/\s/g, "").toLowerCase() + "@gmail.com";
         const password = "Test@123";
         const regex = new RegExp("Specialist", 'i') // i for case insensitive
-        const doctor_data = await Doctor.find({
-            speciality: {
-                $regex: regex
+        const message_data= await Message.find({
+            $or:[
+                {sender: "658fb70b04de584edb3886d4", receiver: "659beda2ac9d72ded814c6c0"},
+                {sender: "659beda2ac9d72ded814c6c0", receiver: "658fb70b04de584edb3886d4"}
+            ],
+            sentAt: {
+                $gt: new Date('2024-01-10T11:36:48.646219')
             }
         })
-        console.log(doctor_data.length);
-        for (let j = 0; j < doctor_data.length; j++) {
-            await Doctor.findByIdAndUpdate(doctor_data[j]._id, {
-              userId: doctor_data[j].userId,
-            })
-            console.log("Updated " + doctor_data[j].userId);
-        }
+        console.log(message_data);
     } catch (e) {
         console.error(e)
     }

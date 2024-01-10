@@ -4,7 +4,7 @@ import Chat from "../models/chat";
 import mongoose from "mongoose";
 import User, {UserType} from "../models/user";
 import Appointment from "../models/appointment";
-import {MessageType} from "../models/message";
+import Message, {MessageType} from "../models/message";
 import chat from "../models/chat";
 
 const inboxRouter = express.Router();
@@ -16,7 +16,14 @@ inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
         const chats = await Chat.find({
                 user_one: req.user
             }
-        ).populate("user_one").populate("user_two");
+        ).populate({
+            path: "user_one",
+            populate: {
+                path: "doctor_data",
+            }
+        }).populate({
+            path: "user_two",
+        });
         const appointment_data = await Appointment.find({
             doctorId: req.user, isDone: false, shouldGetDoneWithin: {$gt: Date.now()}
         });
@@ -56,14 +63,26 @@ inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
         const chats = await Chat.find({
                 user_two: req.user
             }
-        ).populate("user_one").populate("user_two");
+        ).populate({
+            path: "user_one",
+            populate: {
+                path: "doctor_data",
+            }
+        }).populate({
+            path: "user_two",
+        });
+        // chats.map((chat) => {
+        //     let temp= chat.user_one;
+        //     chat.user_one=chat.user_two;
+        //     chat.user_two=temp;
+        // })
         console.log(chats);
         return res.send(chats);
     }
 
 
 });
-inboxRouter.get("/telemedicine_api/send_message", auth, async (req, res) => {
+inboxRouter.post("/telemedicine_api/send_message", auth, async (req, res) => {
     if (!req.body.receiver || !req.body.message) return res.status(400).send("Receiver and message is required");
     const {receiver, message} = req.body;
     let messageType = MessageType.TEXT;
@@ -74,6 +93,7 @@ inboxRouter.get("/telemedicine_api/send_message", auth, async (req, res) => {
             messageType = MessageType.MEDICINE;
         }
     }
+    console.log(req.user, receiver);
     if (req.user === receiver) return res.status(400).send("You cannot send message to yourself");
     const [sender, receiver_data] = await Promise.all([
         User.findOne({_id: req.user}),
@@ -101,16 +121,44 @@ inboxRouter.get("/telemedicine_api/send_message", auth, async (req, res) => {
     if (!chat_data) {
         return res.status(400).send("There is no chat between you and receiver");
     }
-    chat_data.messages.push({
+    const new_message = new Message({
         sender: req.user,
         receiver: receiver,
         type: messageType,
         sentAt: Date.now(),
         data: message
     })
+    await new_message.save();
+    chat_data.messages.push(new_message._id);
     await chat_data.save();
+    console.log(chat_data.messages);
     return res.send(chat_data);
 });
-
+inboxRouter.post("/telemedicine_api/get_message", auth, async (req, res) => {
+    let message_data;
+    console.log(req.body);
+    if (!req.body.receiver) return res.status(400).send("Receiver is required");
+    console.log(req.user, req.body.receiver);
+    if (!req.body.time) {
+        message_data = await Message.find({
+            $or: [
+                {sender: req.user, receiver: req.body.receiver},
+                {receiver: req.user, sender: req.body.receiver}
+            ]
+        })
+    } else {
+        message_data = await Message.find({
+            $or: [
+                {sender: req.user, receiver: req.body.receiver},
+                {receiver: req.user, sender: req.body.receiver}
+            ],
+            sentAt: {
+                $gt: new Date(req.body.time)
+            }
+        })
+    }
+    console.log(message_data)
+    return res.send(message_data);
+})
 
 export default inboxRouter;

@@ -26,7 +26,7 @@ class AuthService {
         password: password,
         email: email,
         address: '',
-        type: 0,
+        type: UserType.USER,
         token: '',
         cart: [],
       );

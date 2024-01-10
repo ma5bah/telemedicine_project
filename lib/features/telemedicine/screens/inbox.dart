@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:amazon_clone_tutorial/constants/global_variables.dart';
 import 'package:amazon_clone_tutorial/features/telemedicine/widget/appointment_card.dart';
 import 'package:amazon_clone_tutorial/models/appointment.dart';
+import 'package:amazon_clone_tutorial/models/user.dart';
 import 'package:amazon_clone_tutorial/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -31,11 +32,16 @@ class _InboxScreenState extends State<InboxScreen> {
     if (responseData.runtimeType == List) {
       return List.generate(responseData.length, (index) {
         return Appointment(
-          userId: userProvider.user.id,
-          doctorName: responseData[index]['user_one']["name"],
+          userId: userProvider.user.id == responseData[index]['user_one']["_id"]
+              ? responseData[index]['user_two']["_id"]
+              : responseData[index]['user_one']["_id"],
+          name: userProvider.user.id == responseData[index]['user_one']["_id"]
+              ? responseData[index]['user_two']["name"]
+              : responseData[index]['user_one']["name"],
           appointmentTime: "2021-09-01T12:00:00.000Z",
           image_url: responseData[index]['user_one']["doctor_data"]
-              ["image_url"],
+                  ["image_url"] ??
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
         );
       });
     }

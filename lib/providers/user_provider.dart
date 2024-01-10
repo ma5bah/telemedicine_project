@@ -8,7 +8,7 @@ class UserProvider extends ChangeNotifier {
     email: '',
     password: '',
     address: '',
-    type: 0,
+    type: UserType.USER,
     token: '',
     cart: [],
   );
