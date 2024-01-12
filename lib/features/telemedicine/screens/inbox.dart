@@ -28,6 +28,8 @@ class _InboxScreenState extends State<InboxScreen> {
       'x-auth-token': userProvider.user.token
     });
     final responseData = json.decode(response.body);
+    print("Inbox");
+    print(userProvider.user.id);
     print(responseData);
     if (responseData.runtimeType == List) {
       return List.generate(responseData.length, (index) {

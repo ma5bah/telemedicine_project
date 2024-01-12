@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 
-String uri = 'http://192.168.0.100:3000';
+var globalEnvironment = Environment.testing; // LineToRemove
 
-// String uri = 'http://4.194.212.45:9999';
+enum Environment {
+  testing,
+  production,
+}
+
+String uri = globalEnvironment == Environment.testing
+    ? 'http://192.168.0.100:3000'
+    : 'http://4.194.212.45:9999';
+
 class GlobalVariables {
   // COLORS
   static const appBarGradient = LinearGradient(

@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 // try to adjust according to your need
 
@@ -22,17 +24,35 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   late BuildContext _context;
+  var _sender;
+  var _receiver;
   Timer? _messageFetchTimer;
   List<types.Message> _messages = [];
-  final _user = types.User(id: UserProvider().user.id);
+  var _serialNumber = -1;
+
   @override
   void initState() {
     super.initState();
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    _sender = types.User(
+      id: userProvider.user.id,
+    );
+    _receiver = types.User(
+      id: widget.receiver.userId,
+    );
     fetchMessage(null);
-    _messageFetchTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      String time = "";
-      if (_messages.length > 0) {
-        time = _messages[_messages.length - 1].createdAt.toString();
+    _messageFetchTimer = Timer.periodic(
+        Duration(seconds: (globalEnvironment == Environment.testing) ? 3 : 1),
+        (_) {
+      // ignore: avoid_init_to_null
+      String? time = null;
+      if (_messages.isNotEmpty) {
+        // print(_messages[_messages.length - 1].createdAt.toString());
+        time = DateTime.fromMillisecondsSinceEpoch(_messages[0].createdAt!)
+            .toIso8601String();
+        // time = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(DateTime.parse(
+        //     _messages[_messages.length - 1].createdAt.toString()));
+        // print(time);
       }
       fetchMessage(time);
     });
@@ -45,7 +65,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> fetchMessage(String? dte) async {
-    // print(dte);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     // print(userProvider.user.token);
     final finalUrl = Uri.parse('$uri/telemedicine_api/get_message');
@@ -67,15 +86,31 @@ class _ChatScreenState extends State<ChatScreen> {
       );
 
       if (response.statusCode == 200) {
-        var messageData = jsonDecode(response.body);
-        print("messageData");
+        // print("1");
+        var messageData = jsonDecode(response.body)['messages'];
+        var serialNumber = jsonDecode(response.body)['serialNumber'];
+        setState(() {
+          _serialNumber = serialNumber;
+        });
         print(messageData);
-        if (messageData["messages"].length > 0) {
-          List<types.Message> messages = [];
-          for (var i = 0; i < messageData["messages"].length; i++) {
+        print(serialNumber);
+
+        // print(new DateTime.fromMicrosecondsSinceEpoch(
+        //     DateTime.parse(messageData[0]["sentAt"]).millisecondsSinceEpoch *
+        //         1000));
+        // DateTime.parse(messageData[0]["sentAt"])
+        if (messageData.length > 0) {
+          // List<types.Message> messages = [];
+          for (var i = 0; i < messageData.length; i++) {
             // @TODO: Add logic to handle different message types
             // @TODO: Add All message to the messages list
-            // messages.add(types.TextMessage(id: ));
+            print(messageData[i]);
+            _addMessage(types.TextMessage(
+                id: const Uuid().v4(),
+                author: types.User(id: messageData[i]["sender"].toString()),
+                text: messageData[i]["data"],
+                createdAt: DateTime.parse(messageData[i]["sentAt"])
+                    .millisecondsSinceEpoch));
           }
         }
         // Handle the message data here
@@ -95,6 +130,15 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.receiver.name),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.video_call),
+            onPressed: () {
+              // Implement video call functionality here.
+            },
+          ),
+          Text("$_serialNumber"),
+        ],
       ),
       body: Chat(
           messages: _messages,
@@ -103,7 +147,8 @@ class _ChatScreenState extends State<ChatScreen> {
             // Call the sendMessage method here with appropriate parameters
             sendMessage(context, widget.receiver.userId, message.text);
           },
-          user: _user),
+          user: types.User(
+              id: Provider.of<UserProvider>(context, listen: false).user.id)),
     );
   }
 
@@ -148,7 +193,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _handleSendPressed(types.PartialText message) {
     final textMessage = types.TextMessage(
-      author: _user,
+      author: _sender,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: "id",
       text: message.text,

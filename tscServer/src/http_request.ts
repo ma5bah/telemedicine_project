@@ -6,6 +6,7 @@ import {throws} from "node:assert";
 import Doctor from "./models/doctor";
 import mongoose from "mongoose";
 import Message from "./models/message";
+import Chat from "./models/chat";
 
 
 const main = async () => {
@@ -24,16 +25,11 @@ const main = async () => {
         // const email = doc_data.name.replace(/\s/g, "").toLowerCase() + "@gmail.com";
         const password = "Test@123";
         const regex = new RegExp("Specialist", 'i') // i for case insensitive
-        const message_data= await Message.find({
-            $or:[
-                {sender: "658fb70b04de584edb3886d4", receiver: "659beda2ac9d72ded814c6c0"},
-                {sender: "659beda2ac9d72ded814c6c0", receiver: "658fb70b04de584edb3886d4"}
-            ],
-            sentAt: {
-                $gt: new Date('2024-01-10T11:36:48.646219')
+        const chats = await Chat.find({
+                user_one: "659bf115ac9d72ded814e46a",
             }
-        })
-        console.log(message_data);
+        )
+        console.log(chats);
     } catch (e) {
         console.error(e)
     }

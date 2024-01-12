@@ -11,6 +11,7 @@ import Appointment from "../models/appointment";
 import admin from "../middlewares/admin";
 import message, {MessageType} from "../models/message";
 import Message from "../models/message";
+import doctor from "../models/doctor";
 // import  from "mongodb";
 
 
@@ -20,7 +21,7 @@ doctorRouter.post("/doctor_api/start_consult", auth, async (req, res) => {
     })
     if (!doctor_profile) return res.status(400).send("Doctor not found");
     const list_of_patients = await WaitingQueue.find({
-        doctorId: doctor_profile.userId,
+        doctorId: doctor_profile.userId.toString(),
         lastActive: {
             $lt: Date.now() - 2 * 60 * 1000
         }
@@ -237,7 +238,7 @@ doctorRouter.post("/doctor_api/create_appointment", auth, async (req, res) => {
     if (!user_data) return res.status(400).send("User not found");
     if (doctor_profile.fees > user_data.balance) return res.status(400).send("Insufficient balance");
     const previous_appointent_data = await Appointment.findOne({
-        doctorId: doctor_profile.userId,
+        doctorId: doctor_profile.userId.toString(),
         userId: req.user,
         isDone: false,
         shouldGetDoneWithin: {
@@ -250,13 +251,13 @@ doctorRouter.post("/doctor_api/create_appointment", auth, async (req, res) => {
     });
     const [appointment_data, doctor_user_profile] = await Promise.all([
         Appointment.create({
-            doctorId: doctor_profile.userId,
+            doctorId: doctor_profile.userId.toString(),
             userId: req.user,
             isDone: false,
             shouldGetDoneWithin: Date.now() + 2 * 24 * 60 * 60 * 1000,
         }),
         User.findOne({
-            _id: doctor_profile.userId
+            _id: doctor_profile.userId.toString()
         })
     ])
     if (!doctor_user_profile) return res.status(400).send("Doctor user not found");
@@ -274,14 +275,15 @@ doctorRouter.post("/doctor_api/create_appointment", auth, async (req, res) => {
     );
     if (!chat) {
         chat = new Chat({
-            user_one: doctor_profile.userId,
+            user_one: doctor_profile.userId.toString(),
             user_two: req.user,
             messages: [],
         })
         await chat.save();
     }
+
     const new_message = new Message({
-        sender: doctor_profile.userId,
+        sender: doctor_profile.userId.toString(),
         receiver: req.user,
         data: "Appointment created",
         type: MessageType.TEXT,
@@ -289,12 +291,12 @@ doctorRouter.post("/doctor_api/create_appointment", auth, async (req, res) => {
     })
     await new_message.save()
     chat.messages.push(new_message._id);
-    // await chat.save();
     await chat.save();
     return res.json({
         message: "Appointment created successfully",
         appointment_data: appointment_data
     });
+
 });
 
 export default doctorRouter;

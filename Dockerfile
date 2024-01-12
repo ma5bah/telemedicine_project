@@ -1,47 +1,44 @@
-FROM ubuntu:18.04
+# Use official Debian-based image as the parent image
+FROM debian:bullseye-slim
 
+# Set environment variables for Flutter and Java
+ENV FLUTTER_HOME=/usr/local/flutter
+ENV FLUTTER_VERSION=2.10.0
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV PATH=$FLUTTER_HOME/bin:$JAVA_HOME/bin:$PATH
 
-# Prerequisites
-RUN apt-get update && apt-get install -y gnupg curl git unzip xz-utils zip libglu1-mesa wget 
-# Example for Corretto 11
-RUN wget -O- https://apt.corretto.aws/corretto.key | apt-key add - \
-    && add-apt-repository 'deb https://apt.corretto.aws stable main' \
-    && apt-get update \
-    && apt-get install -y java-11-amazon-corretto-jdk
+# Set environment variables for Android SDK
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV PATH=$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH
 
-# Dynamically set JAVA_HOME
-RUN JAVA_DIR=$(dirname $(dirname $(readlink -f $(which java)))) && \
-    echo "export JAVA_HOME=$JAVA_DIR" >> /etc/environment && \
-    echo "export PATH=$JAVA_HOME/bin:$PATH" >> /etc/environment
+# Install required dependencies
+RUN apt-get update && \
+    apt-get install -y curl unzip git openjdk-11-jdk && \
+    apt-get clean
 
-# Set up new user
-RUN useradd -ms /bin/bash developer
-USER developer
-WORKDIR /home/developer
+# Download and install Flutter
+RUN git clone https://github.com/flutter/flutter.git -b stable $FLUTTER_HOME && \
+    flutter precache --version $FLUTTER_VERSION && \
+    flutter config --no-analytics
 
-# Prepare Android directories and system variables
-RUN mkdir -p Android/sdk
-ENV ANDROID_SDK_ROOT /home/developer/Android/sdk
-RUN mkdir -p .android && touch .android/repositories.cfg
+# Accept Android licenses
+RUN mkdir -p $ANDROID_SDK_ROOT/licenses && \
+    echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_SDK_ROOT/licenses/android-sdk-license && \
+    echo "84831b9409646a918e30573bab4c9c91346d8abd" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
 
-# Set up Android SDK
-RUN wget -O sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
-RUN unzip sdk-tools.zip && rm sdk-tools.zip
-RUN mv tools Android/sdk/tools
-RUN cd Android/sdk/tools/bin && ./sdkmanager --update
-RUN cd Android/sdk/tools/bin && yes | ./sdkmanager --licenses
-RUN cd Android/sdk/tools/bin && ./sdkmanager "build-tools;29.0.2" "patcher;v4" "platform-tools" "platforms;android-29" "sources;android-29"
-ENV PATH "$PATH:/home/developer/Android/sdk/platform-tools"
+# Create a directory for the Flutter app and set it as the working directory
+WORKDIR /app
 
-# Download Flutter SDK specific version (2.10.5)
-RUN git clone --branch 2.10.5 https://github.com/flutter/flutter.git
-ENV PATH "$PATH:/home/developer/flutter/bin"
+# Copy the Flutter project files into the container
+COPY . .
 
-# Run basic check to download Dart SDK
-RUN flutter doctor
+# Run Flutter commands to build the APK
+RUN flutter upgrade && \
+    flutter pub get && \
+    flutter build apk --release
 
-# Copy the current directory contents into the container at /home/developer
-COPY . /home/developer
+# Expose the build output directory
+VOLUME /app/build/app/outputs/flutter-apk
 
-# Build the project (Replace this with your build command)
-RUN flutter build apk --release
+# Set the entry point to copy the generated APK to a mounted volume
+CMD cp -r build/app/outputs/flutter-apk /app/build_output

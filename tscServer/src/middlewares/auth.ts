@@ -11,7 +11,7 @@ const auth = async (req:express.Request, res:express.Response, next:express.Next
       return res
         .status(401)
         .json({ msg: "Token verification failed, authorization denied." });
-
+    req.type = verified.type;
     req.user = verified.id;
     req.token = token;
     next();
