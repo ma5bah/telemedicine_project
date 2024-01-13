@@ -13,79 +13,56 @@ const inboxRouter = express.Router();
 inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
     let isUserDoctor = false;
     if (req.type === UserType.DOCTOR) isUserDoctor = true;
-    if (isUserDoctor) {
-        console.log(req.user);
-        const chats = await Chat.find({
-                $or: [
-                    {user_one: req.user},
-                    {user_two: req.user}
-                ]
-            }
-        ).populate({
-            path: "user_one",
-            populate: {
-                path: "doctor_data",
-            }
-        }).populate({
-            path: "user_two",
+    const chats = await Chat.find({
+            $or: [
+                {user_one: req.user},
+                {user_two: req.user}
+            ]
+        }
+    ).populate({
+        path: "user_one",
+        populate: {
+            path: "doctor_data",
+        }
+    }).populate({
+        path: "user_two",
+    });
+    const appointment_data = await Appointment.find({
+        $or: [
+            {doctorId: req.user},
+            {userId: req.user}
+        ],
+
+        isDone: false, shouldGetDoneWithin: {$gt: Date.now()}
+    });
+
+    let chat_data = [];
+    for (let chat of chats) {
+        let appointment = appointment_data.find((appointment) => {
+            return (appointment.doctorId == chat.user_one && appointment.userId == chat.user_two)
         });
-        console.log(chats);
-        return res.send(chats);
-        // const appointment_data = await Appointment.find({
-        //     doctorId: req.user, isDone: false, shouldGetDoneWithin: {$gt: Date.now()}
-        // });
-        // let chat_data = chats.map(async (chat) => {
-        //     let appointment = appointment_data.find((appointment) => {
-        //         return (appointment.doctorId == chat.user_one._id && appointment.userId == chat.user_two._id)
-        //     })
-        //     if (!appointment) return chat;
-        //     let doctor_id;
-        //     if (isUserDoctor) {
-        //         doctor_id = req.user;
-        //     } else {
-        //         if (chat.user_one._id == req.user) {
-        //             doctor_id = chat.user_two._id;
-        //         } else if (chat.user_two._id == req.user) {
-        //             doctor_id = chat.user_one._id;
-        //         }
-        //     }
-        //
-        //     let serialNumber = -1;
-        //     await Appointment.countDocuments({
-        //         createdAt: {
-        //             $lt: appointment.createdAt
-        //         },
-        //         doctorId: doctor_id,
-        //     }, (err: any, count: number) => {
-        //         if (err) return res.status(400).send("Error in fetching serial number");
-        //         serialNumber = count;
-        //     })
-        //
-        //     return {
-        //         serialNumber: serialNumber,
-        //         ...chat
-        //     }
-        // });
-    } else {
-        const chats = await Chat.find({
-                user_two: req.user
-            }
-        ).populate({
-            path: "user_one",
-            populate: {
-                path: "doctor_data",
-            }
-        }).populate({
-            path: "user_two",
-        });
-        // chats.map((chat) => {
-        //     let temp= chat.user_one;
-        //     chat.user_one=chat.user_two;
-        //     chat.user_two=temp;
-        // })
-        console.log(chats);
-        return res.send(chats);
+
+        if (!appointment) {
+            chat_data.push(chat);
+        } else {
+            let serialNumber = await Appointment.countDocuments({
+                createdAt: {
+                    $lt: appointment.createdAt
+                },
+                doctorId: appointment.doctorId,
+                shouldGetDoneWithin: {
+                    $gt: Date.now()
+                },
+                isDone: false,
+            });
+            chat_data.push({
+                serialNumber: serialNumber,
+                ...chat
+            });
+        }
     }
+    // console.log("chat_data", chat_data);
+    return res.send(chat_data);
 });
 inboxRouter.post("/telemedicine_api/send_message", auth, async (req, res) => {
     if (!req.body.receiver || !req.body.message) return res.status(400).send("Receiver and message is required");

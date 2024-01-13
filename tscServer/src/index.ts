@@ -15,7 +15,7 @@ import doctorRouter from "./routes/doctor";
 // INIT
 const PORT = process.env.PORT && Number.parseInt(process.env.PORT) || 3000;
 const app = express();
-const DB = "mongodb+srv://u1904001:VFUnbKhh2Rp9ZSZd@cluster0.1xfncjc.mongodb.net/?retryWrites=true&w=majority";
+const DB = "mongodb+srv://cuet:NZkkDUPWip0uAN3K@cluster0.1xfncjc.mongodb.net/?retryWrites=true&w=majority";
 
 // middleware
 app.use(express.json());
@@ -35,6 +35,9 @@ mongoose
     .catch((e) => {
         console.log(e);
     });
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`connected at port ${PORT}`);
+});
 // const scheduledJobFunction = CronJob.schedule("*/5 * * * *", () => {
 //     console.log("I'm executed on a schedule!");
 //     WaitingQueue.updateMany({
@@ -55,6 +58,3 @@ mongoose
 // });
 //
 // scheduledJobFunction.start();
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`connected at port ${PORT}`);
-});

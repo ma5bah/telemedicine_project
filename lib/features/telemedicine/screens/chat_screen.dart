@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
+
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -86,7 +86,7 @@ class _ChatScreenState extends State<ChatScreen> {
       );
 
       if (response.statusCode == 200) {
-        // print("1");
+        print("1");
         var messageData = jsonDecode(response.body)['messages'];
         var serialNumber = jsonDecode(response.body)['serialNumber'];
         setState(() {

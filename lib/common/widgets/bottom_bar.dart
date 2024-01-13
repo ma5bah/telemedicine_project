@@ -5,7 +5,7 @@ import 'package:amazon_clone_tutorial/features/doctor/screens/doctor_category_li
 import 'package:amazon_clone_tutorial/features/home/screens/home_screen.dart';
 import 'package:amazon_clone_tutorial/features/telemedicine/screens/inbox.dart';
 import 'package:amazon_clone_tutorial/providers/user_provider.dart';
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -145,10 +145,14 @@ class _BottomBarState extends State<BottomBar> {
                   ),
                 ),
               ),
-              child: Badge(
-                elevation: 0,
+              child: badges.Badge(
+                // elevation: 0,
+                position: badges.BadgePosition.topEnd(
+                  top: 0,
+                  end: 0,
+                ),
                 badgeContent: Text(userCartLen.toString()),
-                badgeColor: Colors.white,
+                // badgeColor: Colors.white,
                 child: const Icon(
                   Icons.shopping_cart_outlined,
                 ),

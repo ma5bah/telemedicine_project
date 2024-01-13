@@ -11,8 +11,8 @@ import Chat from "./models/chat";
 
 const main = async () => {
 
-    const DB = "mongodb+srv://u1904001:VFUnbKhh2Rp9ZSZd@cluster0.1xfncjc.mongodb.net/?retryWrites=true&w=majority";
-    mongoose
+    const DB = "mongodb+srv://cuet:NZkkDUPWip0uAN3K@cluster0.1xfncjc.mongodb.net/?retryWrites=true&w=majority";
+    await mongoose
         .connect(DB)
         .then(() => {
             console.log("Connection Successful");
