@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-var globalEnvironment = Environment.production; // LineToRemove
+var globalEnvironment = Environment.testing; // LineToRemove
 
 enum Environment {
   testing,

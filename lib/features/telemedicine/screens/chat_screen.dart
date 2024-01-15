@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:amazon_clone_tutorial/constants/global_variables.dart';
-import 'package:amazon_clone_tutorial/models/appointment.dart';
-import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:carecompass/constants/global_variables.dart';
+import 'package:carecompass/models/appointment.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;

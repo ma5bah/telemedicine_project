@@ -1,8 +1,8 @@
-import 'package:amazon_clone_tutorial/features/telemedicine/screens/chat_screen.dart';
-import 'package:amazon_clone_tutorial/features/telemedicine/screens/video_call_screen.dart';
-import 'package:amazon_clone_tutorial/models/appointment.dart';
-import 'package:amazon_clone_tutorial/models/user.dart';
-import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:carecompass/features/telemedicine/screens/chat_screen.dart';
+import 'package:carecompass/features/telemedicine/screens/video_call_screen.dart';
+import 'package:carecompass/models/appointment.dart';
+import 'package:carecompass/models/user.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

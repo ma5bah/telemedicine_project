@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:amazon_clone_tutorial/constants/error_handling.dart';
-import 'package:amazon_clone_tutorial/constants/global_variables.dart';
-import 'package:amazon_clone_tutorial/constants/utils.dart';
-import 'package:amazon_clone_tutorial/models/product.dart';
-import 'package:amazon_clone_tutorial/models/user.dart';
-import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:carecompass/constants/error_handling.dart';
+import 'package:carecompass/constants/global_variables.dart';
+import 'package:carecompass/constants/utils.dart';
+import 'package:carecompass/models/product.dart';
+import 'package:carecompass/models/user.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:amazon_clone_tutorial/constants/global_variables.dart';
-import 'package:amazon_clone_tutorial/models/doctor.dart';
-import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:carecompass/constants/global_variables.dart';
+import 'package:carecompass/models/doctor.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';

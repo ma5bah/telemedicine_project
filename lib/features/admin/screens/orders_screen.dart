@@ -1,8 +1,8 @@
-import 'package:amazon_clone_tutorial/common/widgets/loader.dart';
-import 'package:amazon_clone_tutorial/features/account/widgets/single_product.dart';
-import 'package:amazon_clone_tutorial/features/admin/services/admin_services.dart';
-import 'package:amazon_clone_tutorial/features/order_details/screens/order_details.dart';
-import 'package:amazon_clone_tutorial/models/order.dart';
+import 'package:carecompass/common/widgets/loader.dart';
+import 'package:carecompass/features/account/widgets/single_product.dart';
+import 'package:carecompass/features/admin/services/admin_services.dart';
+import 'package:carecompass/features/order_details/screens/order_details.dart';
+import 'package:carecompass/models/order.dart';
 import 'package:flutter/material.dart';
 
 class OrdersScreen extends StatefulWidget {

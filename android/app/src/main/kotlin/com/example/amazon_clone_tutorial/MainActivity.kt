@@ -1,4 +1,4 @@
-package com.example.amazon_clone_tutorial
+package com.example.carecompass
 
 import io.flutter.embedding.android.FlutterActivity
 

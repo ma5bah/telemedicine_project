@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:amazon_clone_tutorial/constants/global_variables.dart';
-import 'package:amazon_clone_tutorial/features/telemedicine/widget/appointment_card.dart';
-import 'package:amazon_clone_tutorial/models/appointment.dart';
-import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:carecompass/constants/global_variables.dart';
+import 'package:carecompass/features/telemedicine/widget/appointment_card.dart';
+import 'package:carecompass/models/appointment.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -75,7 +75,6 @@ class _InboxScreenState extends State<InboxScreen> {
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: GlobalVariables.appBarGradient,
-              
             ),
           ),
           title: const Text("All appointments"),

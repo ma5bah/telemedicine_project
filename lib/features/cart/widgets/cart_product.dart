@@ -1,7 +1,7 @@
-import 'package:amazon_clone_tutorial/features/cart/services/cart_services.dart';
-import 'package:amazon_clone_tutorial/features/product_details/services/product_details_services.dart';
-import 'package:amazon_clone_tutorial/models/product.dart';
-import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:carecompass/features/cart/services/cart_services.dart';
+import 'package:carecompass/features/product_details/services/product_details_services.dart';
+import 'package:carecompass/models/product.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

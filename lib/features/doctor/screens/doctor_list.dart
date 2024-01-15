@@ -1,10 +1,10 @@
-import 'package:amazon_clone_tutorial/features/doctor/screens/doctor_details.dart';
-import 'package:amazon_clone_tutorial/models/doctor.dart';
-import 'package:amazon_clone_tutorial/providers/doctor_provider.dart';
-import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:carecompass/features/doctor/screens/doctor_details.dart';
+import 'package:carecompass/models/doctor.dart';
+import 'package:carecompass/providers/doctor_provider.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 
-import 'package:amazon_clone_tutorial/constants/global_variables.dart';
+import 'package:carecompass/constants/global_variables.dart';
 import 'package:provider/provider.dart';
 
 class DoctorListScreen extends StatefulWidget {

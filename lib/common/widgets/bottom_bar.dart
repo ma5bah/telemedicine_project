@@ -1,10 +1,10 @@
-import 'package:amazon_clone_tutorial/constants/global_variables.dart';
-import 'package:amazon_clone_tutorial/features/account/screens/account_screen.dart';
-import 'package:amazon_clone_tutorial/features/cart/screens/cart_screen.dart';
-import 'package:amazon_clone_tutorial/features/doctor/screens/doctor_category_list.dart';
-import 'package:amazon_clone_tutorial/features/home/screens/home_screen.dart';
-import 'package:amazon_clone_tutorial/features/telemedicine/screens/inbox.dart';
-import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:carecompass/constants/global_variables.dart';
+import 'package:carecompass/features/account/screens/account_screen.dart';
+import 'package:carecompass/features/cart/screens/cart_screen.dart';
+import 'package:carecompass/features/doctor/screens/doctor_category_list.dart';
+import 'package:carecompass/features/home/screens/home_screen.dart';
+import 'package:carecompass/features/telemedicine/screens/inbox.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

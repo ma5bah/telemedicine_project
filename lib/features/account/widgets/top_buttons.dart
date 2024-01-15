@@ -1,5 +1,5 @@
-import 'package:amazon_clone_tutorial/features/account/services/account_services.dart';
-import 'package:amazon_clone_tutorial/features/account/widgets/account_button.dart';
+import 'package:carecompass/features/account/services/account_services.dart';
+import 'package:carecompass/features/account/widgets/account_button.dart';
 import 'package:flutter/material.dart';
 
 class TopButtons extends StatelessWidget {

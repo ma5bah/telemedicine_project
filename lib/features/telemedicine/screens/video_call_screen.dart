@@ -1,5 +1,5 @@
 // Flutter imports:
-import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';

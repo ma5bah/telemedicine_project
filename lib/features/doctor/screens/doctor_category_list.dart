@@ -1,7 +1,7 @@
-import 'package:amazon_clone_tutorial/features/doctor/screens/doctor_list.dart';
+import 'package:carecompass/features/doctor/screens/doctor_list.dart';
 import 'package:flutter/material.dart';
-import 'package:amazon_clone_tutorial/features/doctor/local_constants/category.dart';
-import 'package:amazon_clone_tutorial/constants/global_variables.dart';
+import 'package:carecompass/features/doctor/local_constants/category.dart';
+import 'package:carecompass/constants/global_variables.dart';
 
 class DoctorCategoryScreen extends StatefulWidget {
   const DoctorCategoryScreen({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
-import 'package:amazon_clone_tutorial/constants/global_variables.dart';
-import 'package:amazon_clone_tutorial/features/account/widgets/below_app_bar.dart';
-import 'package:amazon_clone_tutorial/features/account/widgets/orders.dart';
-import 'package:amazon_clone_tutorial/features/account/widgets/top_buttons.dart';
+import 'package:carecompass/constants/global_variables.dart';
+import 'package:carecompass/features/account/widgets/below_app_bar.dart';
+import 'package:carecompass/features/account/widgets/orders.dart';
+import 'package:carecompass/features/account/widgets/top_buttons.dart';
 import 'package:flutter/material.dart';
 
 class AccountScreen extends StatelessWidget {
