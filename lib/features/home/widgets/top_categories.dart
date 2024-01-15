@@ -13,16 +13,17 @@ class TopCategories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 60,
+      height: 100,
       child: ListView.builder(
-        itemCount: GlobalVariables.categoryImages.length,
+        itemCount: GlobalVariables
+            .list_of_med.length, // GlobalVariables.categoryImages.length,
         scrollDirection: Axis.horizontal,
         itemExtent: 75,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () => navigateToCategoryPage(
               context,
-              GlobalVariables.categoryImages[index]['title']!,
+              GlobalVariables.list_of_med[index].keys.first,
             ),
             child: Column(
               children: [
@@ -31,15 +32,15 @@ class TopCategories extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50),
                     child: Image.asset(
-                      GlobalVariables.categoryImages[index]['image']!,
+                      "assets/images/${index + 1}/logo.png",
                       fit: BoxFit.cover,
-                      height: 40,
+                      height: 60,
                       width: 40,
                     ),
                   ),
                 ),
                 Text(
-                  GlobalVariables.categoryImages[index]['title']!,
+                  GlobalVariables.list_of_med[index].keys.first,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,

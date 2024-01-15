@@ -1,4 +1,5 @@
 name: amazon_clone_tutorial
+# name: carecompass
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -18,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.16.2 <4.0.0"
+  sdk: ">=3.2.3 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -29,11 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  # cupertino_icons: ^1.0.2
-  # http: ^0.13.4
   provider: ^6.1.1
   shared_preferences: ^2.2.2
   badges: ^3.1.2
@@ -42,7 +38,7 @@ dependencies:
   file_picker: ^6.1.1
   cloudinary_public: ^0.23.1 
   flutter_rating_bar: ^4.0.1 
-  pay: ^ 1.1.2 
+  pay: ^1.1.2 
   # intl: ^0.17.0
   fl_chart: ^0.66.0
   # charts_flutter: ^0.12.0
@@ -50,6 +46,7 @@ dependencies:
   zego_uikit_prebuilt_call: ^4.1.4
   flutter_charts: ^0.5.2
   wakelock_web: ^0.4.0
+
 
 
 dev_dependencies:
@@ -78,6 +75,13 @@ flutter:
     - assets/images/
     - assets/applepay.json
     - assets/gpay.json
+    - assets/images/1/
+    - assets/images/2/
+    - assets/images/3/
+    - assets/images/4/
+    - assets/images/5/
+    - assets/images/6/
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

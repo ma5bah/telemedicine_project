@@ -1,6 +1,10 @@
 import 'package:amazon_clone_tutorial/features/telemedicine/screens/chat_screen.dart';
+import 'package:amazon_clone_tutorial/features/telemedicine/screens/video_call_screen.dart';
 import 'package:amazon_clone_tutorial/models/appointment.dart';
+import 'package:amazon_clone_tutorial/models/user.dart';
+import 'package:amazon_clone_tutorial/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppointmentCard extends StatelessWidget {
   final Appointment appointment;
@@ -10,6 +14,7 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
     return Card(
       child: ListTile(
         leading: Image.network(appointment.image_url),
@@ -28,24 +33,27 @@ class AppointmentCard extends StatelessWidget {
               child: const Icon(Icons.message),
             ),
             const SizedBox(width: 13),
-            InkWell(
-              onTap: () {
-                // Add logic to handle calling
-              },
-              child: const Icon(Icons.call),
-            ),
-            const SizedBox(width: 13),
-            InkWell(
-              onTap: () {
-                // Add logic to handle video calling
-              },
-              child: const Icon(Icons.video_call),
-            ),
+            userProvider.user.type == UserType.DOCTOR ||
+                    appointment.start_consultation_request_by_doctor == true
+                ? InkWell(
+                    onTap: () {
+                      // Add logic to handle video calling
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              VideoCallPage(callID: appointment.id)));
+                    },
+                    child: const Icon(Icons.video_call),
+                  )
+                : InkWell(
+                    child: Text("${appointment.serialNumber}"),
+                  ),
           ],
         ),
         subtitle: Row(
           children: [
-            Text(appointment.appointmentTime),
+            Text(appointment.id),
+            // Text(appointment.appointmentTime),
           ],
         ),
       ),

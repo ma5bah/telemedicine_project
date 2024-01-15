@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:amazon_clone_tutorial/constants/global_variables.dart';
 import 'package:amazon_clone_tutorial/features/telemedicine/widget/appointment_card.dart';
 import 'package:amazon_clone_tutorial/models/appointment.dart';
-import 'package:amazon_clone_tutorial/models/user.dart';
 import 'package:amazon_clone_tutorial/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -18,10 +18,23 @@ class InboxScreen extends StatefulWidget {
 }
 
 class _InboxScreenState extends State<InboxScreen> {
+  Timer? _messageFetchTimer;
+  @override
+  void initState() {
+    super.initState();
+    _messageFetchTimer = Timer.periodic(
+        Duration(seconds: (globalEnvironment == Environment.testing) ? 3 : 1),
+        (_) {});
+  }
+
+  @override
+  void dispose() {
+    _messageFetchTimer?.cancel();
+    super.dispose();
+  }
+
   Future<List<Appointment>> fetchData(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    // print("token " + );
-    // Simulate fetching data from an API or database
     final url = Uri.parse('$uri/telemedicine_api/inbox');
     final response = await http.get(url, headers: {
       'Content-Type': 'application/json',
@@ -29,13 +42,14 @@ class _InboxScreenState extends State<InboxScreen> {
     });
 
     final responseData = json.decode(response.body);
-
-    print("Inbox " + url.toString());
-    print(userProvider.user.id);
-    print(responseData);
     if (responseData.runtimeType == List) {
       return List.generate(responseData.length, (index) {
+        // print(responseData[index]["serialNumber"]);
         return Appointment(
+          id: responseData[index]['_id'],
+          serialNumber: responseData[index]['serialNumber'],
+          start_consultation_request_by_doctor: responseData[index]
+              ['start_consultation_request_by_doctor'],
           userId: userProvider.user.id == responseData[index]['user_one']["_id"]
               ? responseData[index]['user_two']["_id"]
               : responseData[index]['user_one']["_id"],
@@ -49,7 +63,6 @@ class _InboxScreenState extends State<InboxScreen> {
         );
       });
     }
-
     return [];
   }
 
@@ -62,6 +75,7 @@ class _InboxScreenState extends State<InboxScreen> {
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: GlobalVariables.appBarGradient,
+              
             ),
           ),
           title: const Text("All appointments"),
@@ -89,6 +103,7 @@ class _InboxScreenState extends State<InboxScreen> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final appointment = snapshot.data![index];
+                // print(snapshot.data![index].user_one);
                 return AppointmentCard(appointment: appointment);
               },
             );

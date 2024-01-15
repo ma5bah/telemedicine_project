@@ -24,7 +24,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController quantityController = TextEditingController();
   final AdminServices adminServices = AdminServices();
 
-  String category = 'Mobiles';
+  String category = 'prescription_medications';
   List<File> images = [];
   final _addProductFormKey = GlobalKey<FormState>();
 
@@ -37,16 +37,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
     quantityController.dispose();
   }
 
-  List<String> productCategories = [
-    'Mobiles',
-    'Essentials',
-    'Appliances',
-    'Books',
-    'Fashion'
-  ];
+  List<String> productCategories = GlobalVariables.list_of_med
+      .map((e) => e.keys.first)
+      .toList(); // ['prescription_medications', 'over_the_counter'];
 
   void sellProduct() {
     if (_addProductFormKey.currentState!.validate() && images.isNotEmpty) {
+
       adminServices.sellProduct(
         context: context,
         name: productNameController.text,

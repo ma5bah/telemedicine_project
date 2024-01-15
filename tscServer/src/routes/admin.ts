@@ -5,10 +5,11 @@ import admin from "../middlewares/admin";
 import Product from "../models/product";
 import Order from "../models/order";
 import User from "../models/user";
+import health_category_json from "../../../assets/health_category.json"
 
 adminRouter.post("/admin/add_balance", admin, async (req, res) => {
     try {
-        const {user_id, amount} = req.body;
+        const { user_id, amount } = req.body;
         if (!user_id) throw new Error("user id is required")
         if (!amount) throw new Error("amount is required")
         if (!Number.isInteger(amount)) throw new Error("amount should be a number")
@@ -19,13 +20,13 @@ adminRouter.post("/admin/add_balance", admin, async (req, res) => {
         user = await user.save();
         res.json(user);
     } catch (e: any) {
-        res.status(500).json({error: e.message});
+        res.status(500).json({ error: e.message });
     }
 })
 // Add product
 adminRouter.post("/admin/add-product", admin, async (req, res) => {
     try {
-        const {name, description, images, quantity, price, category} = req.body;
+        const { name, description, images, quantity, price, category } = req.body;
         let product = new Product({
             name,
             description,
@@ -37,7 +38,7 @@ adminRouter.post("/admin/add-product", admin, async (req, res) => {
         product = await product.save();
         res.json(product);
     } catch (e: any) {
-        res.status(500).json({error: e.message});
+        res.status(500).json({ error: e.message });
     }
 });
 
@@ -47,18 +48,18 @@ adminRouter.get("/admin/get-products", admin, async (req, res) => {
         const products = await Product.find({});
         res.json(products);
     } catch (e: any) {
-        res.status(500).json({error: e.message});
+        res.status(500).json({ error: e.message });
     }
 });
 
 // Delete the product
 adminRouter.post("/admin/delete-product", admin, async (req, res) => {
     try {
-        const {id} = req.body;
+        const { id } = req.body;
         let product = await Product.findByIdAndDelete(id);
         res.json(product);
     } catch (e: any) {
-        res.status(500).json({error: e.message});
+        res.status(500).json({ error: e.message });
     }
 });
 
@@ -67,13 +68,13 @@ adminRouter.get("/admin/get-orders", admin, async (req, res) => {
         const orders = await Order.find({});
         res.json(orders);
     } catch (e: any) {
-        res.status(500).json({error: e.message});
+        res.status(500).json({ error: e.message });
     }
 });
 
 adminRouter.post("/admin/change-order-status", admin, async (req, res) => {
     try {
-        const {id, status} = req.body;
+        const { id, status } = req.body;
         let order = await Order.findById(id);
         if (!order) {
             throw new Error("Internal Server Error");
@@ -82,7 +83,7 @@ adminRouter.post("/admin/change-order-status", admin, async (req, res) => {
         order = await order.save();
         res.json(order);
     } catch (e: any) {
-        res.status(500).json({error: e.message});
+        res.status(500).json({ error: e.message });
     }
 });
 
@@ -99,24 +100,36 @@ adminRouter.get("/admin/analytics", admin, async (req, res) => {
             }
         }
         // CATEGORY WISE ORDER FETCHING
-        let mobileEarnings = await fetchCategoryWiseProduct("Mobiles");
-        let essentialEarnings = await fetchCategoryWiseProduct("Essentials");
-        let applianceEarnings = await fetchCategoryWiseProduct("Appliances");
-        let booksEarnings = await fetchCategoryWiseProduct("Books");
-        let fashionEarnings = await fetchCategoryWiseProduct("Fashion");
+
+        const categories = [
+            "prescription_medications",
+            "otc_medications",
+            "health_supplements",
+            "personal_care_products",
+            "first_aid_supplies",
+            "chronic_disease_management"
+        ];
+        let prescription_medicationsEarnings = await fetchCategoryWiseProduct("prescription_medications");
+        let otc_medicationsEarnings = await fetchCategoryWiseProduct("otc_medications");
+        let health_supplementsEarnings = await fetchCategoryWiseProduct("health_supplements");
+        let personal_care_productsEarnings = await fetchCategoryWiseProduct("personal_care_products");
+        let first_aid_suppliesEarnings = await fetchCategoryWiseProduct("first_aid_supplies");
+        let chronic_disease_managementEarnings = await fetchCategoryWiseProduct("chronic_disease_management");
+
 
         let earnings = {
             totalEarnings,
-            mobileEarnings,
-            essentialEarnings,
-            applianceEarnings,
-            booksEarnings,
-            fashionEarnings,
+            prescription_medicationsEarnings,
+            otc_medicationsEarnings,
+            health_supplementsEarnings,
+            personal_care_productsEarnings,
+            first_aid_suppliesEarnings,
+            chronic_disease_managementEarnings
         };
 
         res.json(earnings);
     } catch (e: any) {
-        res.status(500).json({error: e.message});
+        res.status(500).json({ error: e.message });
     }
 });
 

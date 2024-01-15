@@ -130,20 +130,11 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.receiver.name),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.video_call),
-            onPressed: () {
-              // Implement video call functionality here.
-            },
-          ),
-          Text("$_serialNumber"),
-        ],
       ),
       body: Chat(
           messages: _messages,
           onSendPressed: (message) {
-            print(message.text);
+            // print(message.text);
             // Call the sendMessage method here with appropriate parameters
             sendMessage(context, widget.receiver.userId, message.text);
           },

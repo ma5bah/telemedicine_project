@@ -27,23 +27,24 @@ inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
     }).populate({
         path: "user_two",
     });
-    const appointment_data = await Appointment.find({
-        $or: [
-            {doctorId: req.user},
-            {userId: req.user}
-        ],
 
-        isDone: false, shouldGetDoneWithin: {$gt: Date.now()}
-    });
-
+    // console.log(chats);
     let chat_data = [];
     for (let chat of chats) {
-        let appointment = appointment_data.find((appointment) => {
-            return (appointment.doctorId == chat.user_one && appointment.userId == chat.user_two)
-        });
-
+        console.log(chat);
+        let appointment = await Appointment.findOne({
+            doctorId: chat.user_one._id,
+            userId: chat.user_two._id,
+            isDone: false,
+            shouldGetDoneWithin: {$gt: Date.now()}
+        })
         if (!appointment) {
-            chat_data.push(chat);
+            chat_data.push({
+                serialNumber: -1,
+                // @ts-ignore
+                ...chat._doc
+            });
+            // chat_data.push(chat);
         } else {
             let serialNumber = await Appointment.countDocuments({
                 createdAt: {
@@ -57,7 +58,8 @@ inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
             });
             chat_data.push({
                 serialNumber: serialNumber,
-                ...chat
+                // @ts-ignore
+                ...chat._doc
             });
         }
     }

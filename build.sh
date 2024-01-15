@@ -14,4 +14,4 @@ done <"$input_file"
 mv "$temp_file" "$input_file"
 rm -f "$temp_file"
 
-fvm flutter build apk --release --no-sound-null-safety
+fvm flutter build apk --release

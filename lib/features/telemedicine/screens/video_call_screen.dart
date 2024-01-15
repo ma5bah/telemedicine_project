@@ -1,63 +1,97 @@
-// // Flutter imports:
-// import 'package:flutter/material.dart';
-// import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+// Flutter imports:
+import 'package:amazon_clone_tutorial/providers/user_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-// class CallPage extends StatefulWidget {
-//   const CallPage({Key? key}) : super(key: key);
+// Package imports:
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
-//   @override
-//   State<StatefulWidget> createState() => CallPageState();
-// }
+class VideoCallPage extends StatefulWidget {
+  static const String routeName = "/video_call_screen";
+  final String callID;
 
-// class CallPageState extends State<CallPage> {
-//   ZegoUIKitPrebuiltCallController? callController;
+  const VideoCallPage({Key? key, required this.callID}) : super(key: key);
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     callController = ZegoUIKitPrebuiltCallController();
-//   }
+  @override
+  State<StatefulWidget> createState() => VideoCallPageState();
+}
 
-//   @override
-//   void dispose() {
-//     super.dispose();
-//     callController = null;
-//   }
+class VideoCallPageState extends State<VideoCallPage> {
+  @override
+  void initState() {
+    super.initState();
+    print(widget.callID);
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final arguments = (ModalRoute.of(context)?.settings.arguments ??
-//         <String, String>{}) as Map<String, String>;
-//     final callID = arguments[PageParam.call_id] ?? '';
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: ZegoUIKitPrebuiltCall(
+        events: ZegoUIKitPrebuiltCallEvents(
+          onCallEnd: (event, defaultAction) => {
+            for (var i = 0; i < 100; i++) {print('ospose' + i.toString())},
+            print(event),
+            defaultAction(),
+          },
+        ),
+        onDispose: () {
+          for (var i = 0; i < 100; i++) {
+            print('onDispose' + i.toString());
+          }
+        },
+        appID: 299445426,
+        appSign:
+            "bdf09171e088264c85c6c3d52d8308ab014dfb73304c5b8964ae48fe35edc83d", //*input your AppSign*/,
+        userID: Provider.of<UserProvider>(context, listen: false).user.id,
+        userName: Provider.of<UserProvider>(context, listen: false).user.name,
+        callID: widget.callID,
+        config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+          // ..bottomMenuBarConfig.buttons = [
+          //   ZegoMenuBarButtonName.toggleCameraButton,
+          //   ZegoMenuBarButtonName.switchCameraButton,
+          //   ZegoMenuBarButtonName.toggleMicrophoneButton,
+          //   ZegoMenuBarButtonName.toggleScreenSharingButton,
+          // ]
 
-//     return SafeArea(
-//       child: ZegoUIKitPrebuiltCall(
-//         appID: 1927057603 /*input your AppID*/,
-//         appSign:
-//             "7fa1cadba11e4b90312fd8ffe28b8cc88a151b587e7235363b567cbeb62e3404" /*input your AppSign*/,
-//         userID: currentUser.id,
-//         userName: currentUser.name,
-//         callID: callID,
-//         controller: callController,
-//         config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+          /// support minimizing
+          ..topMenuBarConfig.isVisible = true
+          ..topMenuBarConfig.buttons = [
+            ZegoMenuBarButtonName.minimizingButton,
+            ZegoMenuBarButtonName.showMemberListButton,
+          ]
+          ..avatarBuilder = customAvatarBuilder,
+      ),
+    );
+  }
+}
 
-//           /// support minimizing
-//           ..topMenuBarConfig.isVisible = true
-//           ..topMenuBarConfig.buttons = [
-//             ZegoMenuBarButtonName.minimizingButton,
-//             ZegoMenuBarButtonName.showMemberListButton,
-//           ]
-//           ..avatarBuilder = customAvatarBuilder
-//           ..onOnlySelfInRoom = (context) {
-//             if (PrebuiltCallMiniOverlayPageState.idle !=
-//                 ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
-//               /// now is minimizing state, not need to navigate, just switch to idle
-//               ZegoUIKitPrebuiltCallMiniOverlayMachine().switchToIdle();
-//             } else {
-//               Navigator.of(context).pop();
-//             }
-//           },
-//       ),
-//     );
-//   }
-// }
+Widget customAvatarBuilder(
+  BuildContext context,
+  Size size,
+  ZegoUIKitUser? user,
+  Map<String, dynamic> extraInfo,
+) {
+  return CachedNetworkImage(
+    imageUrl: 'https://robohash.org/${user?.id}.png',
+    imageBuilder: (context, imageProvider) => Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          image: imageProvider,
+          fit: BoxFit.cover,
+        ),
+      ),
+    ),
+    progressIndicatorBuilder: (context, url, downloadProgress) =>
+        CircularProgressIndicator(value: downloadProgress.progress),
+    errorWidget: (context, url, error) {
+      ZegoLoggerService.logInfo(
+        '$user avatar url is invalid',
+        tag: 'live audio',
+        subTag: 'live page',
+      );
+      return ZegoAvatar(user: user, avatarSize: size);
+    },
+  );
+}

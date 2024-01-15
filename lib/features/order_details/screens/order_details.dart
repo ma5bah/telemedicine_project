@@ -5,7 +5,7 @@ import 'package:amazon_clone_tutorial/features/search/screens/search_screen.dart
 import 'package:amazon_clone_tutorial/models/order.dart';
 import 'package:amazon_clone_tutorial/providers/user_provider.dart';
 import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class OrderDetailScreen extends StatefulWidget {
@@ -105,7 +105,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             width: 1,
                           ),
                         ),
-                        hintText: 'Search Amazon.in',
+
                         hintStyle: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 17,
@@ -149,12 +149,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                        'Order Date:      ${DateTime.fromMillisecondsSinceEpoch(widget.order.orderedAt).toIso8601String()}'),
-                    // Text('Order Date:      ${DateFormat().format(
-                    //   DateTime.fromMillisecondsSinceEpoch(
-                    //       widget.order.orderedAt),
-                    // )}'),
+                    // Text(
+                    // 'Order Date:      ${DateTime.fromMillisecondsSinceEpoch(widget.order.orderedAt).toIso8601String()}'),
+                    Text('Order Date:      ${DateFormat().format(
+                      DateTime.fromMillisecondsSinceEpoch(
+                          widget.order.orderedAt),
+                    )}'),
                     Text('Order ID:          ${widget.order.id}'),
                     Text('Order Total:      \$${widget.order.totalPrice}'),
                   ],

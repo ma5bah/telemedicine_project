@@ -34,7 +34,7 @@ class User {
       'email': email,
       'password': password,
       'address': address,
-      'type': type,
+      'type': type.index,
       'token': token,
       'cart': cart,
     };

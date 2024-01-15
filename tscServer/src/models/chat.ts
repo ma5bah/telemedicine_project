@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import {userSchema} from "./user";
-import {messageSchema} from "./message";
+import { userSchema } from "./user";
+import { messageSchema } from "./message";
 
 const chatSchema = new mongoose.Schema({
     on_video_call: {
@@ -26,7 +26,11 @@ const chatSchema = new mongoose.Schema({
     messages: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Message"
-    }]
+    }],
+    updated_at: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 const Chat = mongoose.model("Chat", chatSchema);

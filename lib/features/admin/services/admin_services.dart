@@ -23,9 +23,15 @@ class AdminServices {
     required List<File> images,
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+// import {v2 as cloudinary} from 'cloudinary';
 
+// cloudinary.config({
+//   cloud_name: 'dms5hejgm',
+//   api_key: '248646315817863',
+//   api_secret: 'EyKHBavI4woACCUL_PScjP20kow'
+// });
     try {
-      final cloudinary = CloudinaryPublic('denfgaxvg', 'uszbstnu');
+      final cloudinary = CloudinaryPublic('dms5hejgm', 'gbudvcps');
       List<String> imageUrls = [];
 
       for (int i = 0; i < images.length; i++) {
@@ -208,12 +214,24 @@ class AdminServices {
         onSuccess: () {
           var response = jsonDecode(res.body);
           totalEarning = response['totalEarnings'];
+          // const categories = [
+          //   "prescription_medications",
+          //   "otc_medications",
+          //   "health_supplements",
+          //   "personal_care_products",
+          //   "first_aid_supplies",
+          //   "chronic_disease_management"
+          // ];
           sales = [
-            Sales('Mobiles', response['mobileEarnings']),
-            Sales('Essentials', response['essentialEarnings']),
-            Sales('Books', response['booksEarnings']),
-            Sales('Appliances', response['applianceEarnings']),
-            Sales('Fashion', response['fashionEarnings']),
+            Sales("prescription_medications",
+                response['prescription_medicationsEarnings']),
+            Sales('otc_medications', response['otc_medicationsEarnings']),
+            Sales('health_supplements', response['health_supplementsEarnings']),
+            Sales('personal_care_products',
+                response['personal_care_productsEarnings']),
+            Sales('first_aid_supplies', response['first_aid_suppliesEarnings']),
+            Sales('chronic_disease_management',
+                response['chronic_disease_managementEarnings']),
           ];
         },
       );

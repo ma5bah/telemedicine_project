@@ -48,14 +48,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               SizedBox(
                 height: 250,
                 child: CategoryProductsChart(salesData: earnings!),
-                // CategoryProductsChart(seriesList: [
-                //   charts.Series(
-                //     id: 'Sales',
-                //     data: earnings!,
-                //     domainFn: (Sales sales, _) => sales.label,
-                //     measureFn: (Sales sales, _) => sales.earning,
-                //   ),
-                // ]),
+
               )
             ],
           );

@@ -47,6 +47,8 @@ class _AuthScreenState extends State<AuthScreen> {
     authService.signInUser(
         context: context,
         email: globalEnvironment == Environment.testing
+            // ? "dr.syedabdulkader@gmail.com"
+            // ? "masbahuddin60@gmail.com"
             ? "test1@gmail.com"
             : _emailController.text,
         password: globalEnvironment == Environment.testing
@@ -60,8 +62,10 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   void initState() {
     super.initState();
-    // Add your automatic sign-in logic here
-    signInUser();
+
+    if (globalEnvironment == Environment.testing) {
+      signInUser();
+    }
   }
 
   @override
