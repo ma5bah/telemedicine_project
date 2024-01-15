@@ -98,7 +98,7 @@ class _DoctorCategoryScreenState extends State<DoctorCategoryScreen> {
                   childAspectRatio: 1, // Adjust the aspect ratio as needed
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  print(displayedCategories[index]);
+                  // print(displayedCategories[index]);
                   return InkWell(
                     onTap: () {
                       // Handle category item tap

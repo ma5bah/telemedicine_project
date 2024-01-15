@@ -47,9 +47,9 @@ class _AuthScreenState extends State<AuthScreen> {
     authService.signInUser(
         context: context,
         email: globalEnvironment == Environment.testing
-            // ? "dr.syedabdulkader@gmail.com"
+            ? "dr.syedabdulkader@gmail.com"
             // ? "masbahuddin60@gmail.com"
-            ? "test1@gmail.com"
+            // ? "test1@gmail.com"
             : _emailController.text,
         password: globalEnvironment == Environment.testing
             ? "Test@123"
@@ -136,6 +136,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               signUpUser();
                             }
                           },
+                          color: Colors.blue,
                         )
                       ],
                     ),
@@ -187,6 +188,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               signInUser();
                             }
                           },
+                          color: Colors.blue,
                         )
                       ],
                     ),

@@ -51,6 +51,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
       var responseData = json.decode(response.body);
       // Do something with responseData
     } else {
+
       // Handle error response
       print("Failed to create appointment: ${response.body}");
     }

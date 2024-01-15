@@ -41,9 +41,7 @@ class _ChatScreenState extends State<ChatScreen> {
       id: widget.receiver.userId,
     );
     fetchMessage(null);
-    _messageFetchTimer = Timer.periodic(
-        Duration(seconds: (globalEnvironment == Environment.testing) ? 3 : 1),
-        (_) {
+    _messageFetchTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       // ignore: avoid_init_to_null
       String? time = null;
       if (_messages.isNotEmpty) {

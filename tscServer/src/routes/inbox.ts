@@ -10,6 +10,30 @@ import {serialize} from "node:v8";
 
 const inboxRouter = express.Router();
 
+
+inboxRouter.post("/telemedicine_api/set_start_consultation_request", auth, async (req, res) => {
+    console.log(req.body);
+    if (!req.body.chat_id) return res.status(400).send("Chat ID is required");
+    console.log(req.body.start_consultation_request);
+    // if (!req.body.start_consultation_request) return res.status(400).send("start_consultation_request is required");
+
+    if (typeof req.body.start_consultation_request !== "boolean") return res.status(400).send("start_consultation_request must be boolean");
+    if (req.type !== UserType.DOCTOR && Boolean(req.body.start_consultation_request)) return res.status(400).send("You are not a doctor");
+    if (!mongoose.isValidObjectId(req.body.chat_id)) return res.status(400).send("Chat ID is not valid");
+    console.log(req.body);
+
+    await Chat.findByIdAndUpdate(req.body.chat_id, {
+        $set: {
+            start_consultation_request_by_doctor: Boolean(req.body.start_consultation_request)
+        }
+    }).catch(e => {
+        console.log(e);
+        return res.status(400).send("Chat ID is not valid");
+    })
+    return res.send({
+        message: "start consultation request sent"
+    });
+})
 inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
     let isUserDoctor = false;
     if (req.type === UserType.DOCTOR) isUserDoctor = true;

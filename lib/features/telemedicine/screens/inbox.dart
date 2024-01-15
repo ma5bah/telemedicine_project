@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:carecompass/constants/global_variables.dart';
+import 'package:carecompass/features/telemedicine/screens/video_call_screen.dart';
 import 'package:carecompass/features/telemedicine/widget/appointment_card.dart';
 import 'package:carecompass/models/appointment.dart';
 import 'package:carecompass/providers/user_provider.dart';
@@ -19,12 +20,44 @@ class InboxScreen extends StatefulWidget {
 
 class _InboxScreenState extends State<InboxScreen> {
   Timer? _messageFetchTimer;
+  ValueNotifier<bool> specialConditionFlag =
+      ValueNotifier(false); // Step 1: Use ValueNotifier
+  String _callID = "";
+  String _userName = "";
   @override
   void initState() {
     super.initState();
-    _messageFetchTimer = Timer.periodic(
-        Duration(seconds: (globalEnvironment == Environment.testing) ? 3 : 1),
-        (_) {});
+    _messageFetchTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final url = Uri.parse('$uri/telemedicine_api/inbox');
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': userProvider.user.token
+      });
+      final responseData = json.decode(response.body);
+      if (responseData.runtimeType == List) {
+        if (specialConditionFlag.value) {
+          specialConditionFlag.value = false;
+        }
+        var flag = false;
+        for (var index = 0; index < responseData.length; index++) {
+          if (responseData[index]["start_consultation_request_by_doctor"] ==
+              true) {
+            flag = true;
+            _callID = responseData[index]["_id"];
+            _userName =
+                responseData[index]['user_one']["_id"] == userProvider.user.id
+                    ? responseData[index]['user_two']["name"]
+                    : responseData[index]['user_one']["name"];
+            print(_callID);
+          }
+        }
+        if (flag != specialConditionFlag.value) {
+          specialConditionFlag.value = flag;
+        }
+      }
+      // setState(() {});
+    });
   }
 
   @override
@@ -44,7 +77,18 @@ class _InboxScreenState extends State<InboxScreen> {
     final responseData = json.decode(response.body);
     if (responseData.runtimeType == List) {
       return List.generate(responseData.length, (index) {
-        // print(responseData[index]["serialNumber"]);
+        if (responseData[index]["start_consultation_request_by_doctor"] ==
+            true) {
+          specialConditionFlag.value = true;
+          _callID = responseData[index]["_id"];
+          _userName =
+              responseData[index]['user_one']["_id"] == userProvider.user.id
+                  ? responseData[index]['user_two']["name"]
+                  : responseData[index]['user_one']["name"];
+          print(_callID);
+        }
+        // print(responseData[index]["start_consultation_request_by_doctor"]);
+        // print(responseData[index]["_id"]);
         return Appointment(
           id: responseData[index]['_id'],
           serialNumber: responseData[index]['serialNumber'],
@@ -77,7 +121,53 @@ class _InboxScreenState extends State<InboxScreen> {
               gradient: GlobalVariables.appBarGradient,
             ),
           ),
-          title: const Text("All appointments"),
+          title: const Text(
+            "Inbox",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+          actions: <Widget>[
+            // Step 3: Use ValueListenableBuilder for Conditional Rendering
+            ValueListenableBuilder<bool>(
+              valueListenable: specialConditionFlag,
+              builder: (context, value, child) {
+                if (value) {
+                  return Row(
+                    children: [
+                      Text("$_userName is calling you"),
+                      IconButton(
+                        icon: const Icon(Icons.video_call),
+                        onPressed: () async {
+                          final userProvider =
+                              Provider.of<UserProvider>(context, listen: false);
+                          final url = Uri.parse(
+                              '$uri/telemedicine_api/set_start_consultation_request');
+                          final response = await http.post(url,
+                              headers: {
+                                'Content-Type': 'application/json',
+                                'x-auth-token': userProvider.user.token
+                              },
+                              body: json.encode({
+                                "chat_id": _callID,
+                                "start_consultation_request": false,
+                              }));
+                          final responseData = json.decode(response.body);
+                          // Add logic to handle video calling
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  VideoCallPage(callID: _callID)));
+                        },
+                      ),
+                    ],
+                  );
+                } else {
+                  return const Text("");
+                }
+              },
+            ),
+          ],
         ),
       ),
       body: FutureBuilder<List<Appointment>>(

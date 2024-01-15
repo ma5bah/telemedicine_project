@@ -46,6 +46,8 @@ dependencies:
   zego_uikit_prebuilt_call: ^4.1.4
   flutter_charts: ^0.5.2
   wakelock_web: ^0.4.0
+  zego_uikit_signaling_plugin: ^2.7.4
+  flutter_styled_toast: ^2.2.1
 
 
 

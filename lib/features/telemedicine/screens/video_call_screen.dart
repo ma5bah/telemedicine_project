@@ -1,10 +1,12 @@
 // Flutter imports:
+import 'dart:convert';
+
+import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
-// Package imports:
+import 'package:http/http.dart' as http;
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class VideoCallPage extends StatefulWidget {
@@ -21,7 +23,7 @@ class VideoCallPageState extends State<VideoCallPage> {
   @override
   void initState() {
     super.initState();
-    print(widget.callID);
+    // print(widget.callID);
   }
 
   @override
@@ -30,16 +32,13 @@ class VideoCallPageState extends State<VideoCallPage> {
       child: ZegoUIKitPrebuiltCall(
         events: ZegoUIKitPrebuiltCallEvents(
           onCallEnd: (event, defaultAction) => {
-            for (var i = 0; i < 100; i++) {print('ospose' + i.toString())},
-            print(event),
+            Provider.of<UserProvider>(context, listen: false)
+                .handleCallEnd(widget.callID),
             defaultAction(),
           },
+          
         ),
-        onDispose: () {
-          for (var i = 0; i < 100; i++) {
-            print('onDispose' + i.toString());
-          }
-        },
+        onDispose: () {},
         appID: 299445426,
         appSign:
             "bdf09171e088264c85c6c3d52d8308ab014dfb73304c5b8964ae48fe35edc83d", //*input your AppSign*/,
