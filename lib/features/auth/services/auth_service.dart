@@ -4,6 +4,7 @@ import 'package:carecompass/common/widgets/bottom_bar.dart';
 import 'package:carecompass/constants/error_handling.dart';
 import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/constants/utils.dart';
+import 'package:carecompass/features/admin/screens/admin_screen.dart';
 import 'package:carecompass/models/user.dart';
 import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -80,10 +81,13 @@ class AuthService {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           Provider.of<UserProvider>(context, listen: false).setUser(res.body);
           await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            BottomBar.routeName,
-            (route) => false,
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) =>
+                  (jsonDecode(res.body)['type'] == UserType.ADMIN)
+                      ? AdminScreen()
+                      : BottomBar(),
+            ),
           );
         },
       );
