@@ -2,10 +2,7 @@ import 'package:carecompass/common/widgets/custom_button.dart';
 import 'package:carecompass/common/widgets/custom_textfield.dart';
 import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/features/auth/services/auth_service.dart';
-import 'package:carecompass/providers/socket_provider.dart';
-import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 enum Auth {
   signin,

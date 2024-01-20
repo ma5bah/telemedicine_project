@@ -34,6 +34,7 @@ inboxRouter.post("/telemedicine_api/set_start_consultation_request", auth, async
         message: "start consultation request sent"
     });
 })
+
 inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
     let isUserDoctor = false;
     if (req.type === UserType.DOCTOR) isUserDoctor = true;

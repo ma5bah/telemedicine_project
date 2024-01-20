@@ -5,6 +5,7 @@ import 'package:carecompass/features/telemedicine/screens/chat_screen.dart';
 import 'package:carecompass/features/telemedicine/screens/video_call_screen.dart';
 import 'package:carecompass/models/appointment.dart';
 import 'package:carecompass/models/user.dart';
+import 'package:carecompass/providers/socket_provider.dart';
 import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,22 +44,18 @@ class AppointmentCard extends StatelessWidget {
             userProvider.user.type == UserType.DOCTOR
                 ? InkWell(
                     onTap: () async {
-                      print("Video call tapped");
-                      final userProvider =
-                          Provider.of<UserProvider>(context, listen: false);
-                      final url = Uri.parse(
-                          '$uri/telemedicine_api/set_start_consultation_request');
-                      final response = await http.post(url,
-                          headers: {
-                            'Content-Type': 'application/json',
-                            'x-auth-token': userProvider.user.token
-                          },
-                          body: json.encode({
-                            "chat_id": appointment.id,
-                            "start_consultation_request": true,
-                          }));
-                      final responseData = json.decode(response.body);
-                      print(responseData);
+                      final data = {
+                        'chatId': appointment
+                            .id, // Replace with the actual receiver's user ID
+                        'startConsultationRequest': true,
+                        'authToken': Provider.of<UserProvider>(context,
+                                listen: false)
+                            .user
+                            .token, // Replace with the actual authentication token
+                      };
+                      Provider.of<SocketIOProvider>(context, listen: false)
+                          .getSocket()
+                          .emit('set_video_call_request', data);
                       // Add logic to handle video calling
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) =>

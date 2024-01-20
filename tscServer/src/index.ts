@@ -26,33 +26,31 @@ const io = new Server(server);
 const DB = "mongodb+srv://cuet:NZkkDUPWip0uAN3K@cluster0.1xfncjc.mongodb.net/?retryWrites=true&w=majority";
 
 enum SocketEvents {
-    CHAT_MESSAGE = 'chat_message',
     ERROR_EVENT = 'error',
     SEND_MESSAGE = 'send_message',
-    CHAT_MESSAGE_EVENT = 'chat_message_event',
-    GET_MESSAGE = 'get_message',
     GET_MESSAGE_RESPONSE = 'get_message_response',
+    SET_VIDEO_CALL_REQUEST = 'set_video_call_request',
+    SEND_VIDEO_CALL_REQUEST = 'send_video_call_request',
 }
 
 io.on('connection', (socket) => {
-    console.log('A user connected');
     socket.on('subscribe', (roomName) => {
         socket.join(roomName);
         console.log(`Socket joined room: ${roomName}`);
-        // console.log(socket.rooms);
+        console.log(socket.rooms);
         // console.log(io.sockets.adapter.rooms.get(roomName));
     });
     socket.on('disconnect', () => {
         console.log('A user disconnected');
     });
-
-    socket.on(SocketEvents.SEND_MESSAGE, async (data) => {
+    socket.on(SocketEvents.SEND_MESSAGE, async (socketData) => {
         try {
-            // Extract required data from the incoming message
-            const {receiver, message, type, authToken} = data;
+            console.log(socketData);
+            // Extract required socketData from the incoming message
+            const {receiver, data, type, authToken} = socketData;
 
             // Check for required fields
-            if (!receiver || !message || !authToken) {
+            if (!receiver || !data || !authToken) {
                 socket.emit(SocketEvents.ERROR_EVENT, 'receiver, message and authToken are required');
                 return;
             }
@@ -77,7 +75,7 @@ io.on('connection', (socket) => {
                 return;
             }
 
-            // Assuming you have a function to retrieve user data by ID
+            // Assuming you have a function to retrieve user socketData by ID
             const [sender, receiverData] = await Promise.all([
                 User.findOne({_id: verified.id}),
                 User.findOne({_id: receiver})
@@ -133,7 +131,7 @@ io.on('connection', (socket) => {
                 receiver: receiver,
                 type: messageType,
                 sentAt: new Date(Date.now()),
-                data: message,
+                data: data,
             });
 
             // Save the new message
@@ -142,10 +140,10 @@ io.on('connection', (socket) => {
             // Update the chat with the new message
             chatData.messages.push(newMessage._id);
             await chatData.save();
-
+            console.log("sending to ", receiver, verified.id);
             // Emit the message to the receiver
-            io.to(receiver).to(verified.id).emit(SocketEvents.CHAT_MESSAGE_EVENT, {
-                message: [newMessage],
+            io.to(receiver).to(verified.id).emit(SocketEvents.GET_MESSAGE_RESPONSE, {
+                messages: [newMessage],
             });
             // console.log(chatData.messages);
         } catch (error) {
@@ -153,15 +151,64 @@ io.on('connection', (socket) => {
             socket.emit(SocketEvents.ERROR_EVENT, 'Internal server error');
         }
     });
+    socket.on(SocketEvents.SET_VIDEO_CALL_REQUEST, async (socketData) => {
+        // Extract required data from the incoming request
+        const {chatId, startConsultationRequest, authToken} = socketData;
+        if (!chatId || typeof startConsultationRequest !== 'boolean' || !authToken) {
+            socket.emit(SocketEvents.ERROR_EVENT, 'chatId, startConsultationRequest, and authToken are required');
+            return;
+        }
 
+        // Verify the authenticity of the authentication token
+        const verified = jwt.verify(authToken, passkey) as jwt.JwtPayload;
+        if (!verified) {
+            socket.emit(SocketEvents.ERROR_EVENT, 'Invalid auth token');
+            return;
+        }
 
-    socket.on('chat message', (msg) => {
-        console.log('Received message:', msg);
-        io.emit('chat message', msg);
-    });
-    socket.on('msg', (data) => {
-        console.log('Received message:', data);
+        // Check if the user is a doctor
+        if (verified.type !== UserType.DOCTOR && startConsultationRequest) {
+            socket.emit(SocketEvents.ERROR_EVENT, 'You are not a doctor');
+            return;
+        }
+
+        // Check if the chat ID is valid
+        if (!mongoose.isValidObjectId(chatId)) {
+            socket.emit(SocketEvents.ERROR_EVENT, 'Chat ID is not valid');
+            return;
+        }
+        try {
+            const chat_data = await Chat.findByIdAndUpdate(chatId, {
+                $set: {
+                    start_consultation_request_by_doctor: startConsultationRequest,
+                },
+            })
+                .populate({
+                    path: "user_one",
+                }).populate({
+                    path: "user_two",
+                })
+                .catch((e) => {
+                    console.error(e);
+                    socket.emit(SocketEvents.ERROR_EVENT, 'Error updating chat');
+                    return;
+                });
+            if (!chat_data) {
+                socket.emit(SocketEvents.ERROR_EVENT, 'Chat not found');
+                return;
+            }
+            socket.to(chat_data.user_two._id.toString()).emit(SocketEvents.SEND_VIDEO_CALL_REQUEST, {
+                // @ts-ignore
+                "userName": chat_data.user_one.name,
+                "callID": chat_data._id,
+            });
+        } catch (error) {
+            console.error(error);
+            socket.emit(SocketEvents.ERROR_EVENT, 'Internal server error');
+        }
+
     })
+
 });
 
 // middleware

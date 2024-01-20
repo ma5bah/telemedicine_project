@@ -8,7 +8,6 @@ import 'package:carecompass/providers/user_provider.dart';
 import 'package:carecompass/router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() {
   runApp(MultiProvider(providers: [

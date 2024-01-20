@@ -27,6 +27,7 @@ class _InboxScreenState extends State<InboxScreen> {
   @override
   void initState() {
     super.initState();
+    
     _messageFetchTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       final url = Uri.parse('$uri/telemedicine_api/inbox');

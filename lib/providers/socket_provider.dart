@@ -11,45 +11,22 @@ class SocketIOProvider extends ChangeNotifier {
   });
   void initSocket(String userId) {
     _socket.onConnect((_) {
-      // print('Connected to server');
-      // for (int i = 0; i < 100; i++) {
-      //   print('connect $i');
-      // }
       _socket.emit('subscribe', userId);
-      _socket.emit('msg', 'test');
     });
-
-    // _socket.on('connect', (_) {
-    //   print('Connected to server');
-    //   _socket.emit('chat message', 'Hello from Flutter client');
-    // });
-
-    _socket.on('chat message', (data) {
-      print('Received message from server: $data');
-    });
-
     _socket.onDisconnect((_) => print('disconnect'));
 
-    // _socket.on('disconnect', (_) {
-    //   print('Disconnected from server');
-    //   notifyListeners();
-    // });
-    
-    _socket.connect();
-  }
+    _socket.on('error', (data) {
+      print('error: $data');
+    });
 
-  void sendMessage(String message) {
-    _socket.emit('chat message', message);
+    _socket.connect();
   }
 
   void disconnect() {
     _socket.disconnect();
-    notifyListeners();
   }
 
   IO.Socket getSocket() {
     return _socket;
   }
 }
-
-

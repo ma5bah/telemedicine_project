@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-var globalEnvironment = Environment.testing; // LineToRemove
+var globalEnvironment = Environment.production; // LineToRemove
 
 enum Environment {
   testing,
@@ -8,7 +8,7 @@ enum Environment {
 }
 
 String uri = (globalEnvironment == Environment.testing)
-    ? 'http://192.168.0.100:3000'
+    ? 'http://192.168.217.94:3000'
     : 'http://4.194.212.45:9999';
 // String uri = 'http://4.194.212.45:9999';
 
