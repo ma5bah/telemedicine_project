@@ -47,8 +47,8 @@ class _AuthScreenState extends State<AuthScreen> {
     authService.signInUser(
         context: context,
         email: globalEnvironment == Environment.testing
-            // ? "dr.sanjidaahmed@gmail.com"
-            ? "masbahuddin@gmail.com"
+            ? "dr.sanjidaahmed@gmail.com"
+            // ? "masbahuddin60@gmail.com"
             // ? "test1@gmail.com"
             : _emailController.text,
         password: globalEnvironment == Environment.testing

@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:carecompass/constants/global_variables.dart';
+import 'package:carecompass/providers/socket_provider.dart';
 import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,17 +32,27 @@ class VideoCallPageState extends State<VideoCallPage> {
     return SafeArea(
       child: ZegoUIKitPrebuiltCall(
         events: ZegoUIKitPrebuiltCallEvents(
-          onCallEnd: (event, defaultAction) => {
-            Provider.of<UserProvider>(context, listen: false)
-                .handleCallEnd(widget.callID),
-            defaultAction(),
+          onCallEnd: (event, defaultAction) {
+            final data = {
+              'chatId':
+                  widget.callID, // Replace with the actual receiver's user ID
+              'startConsultationRequest': false,
+              'authToken': Provider.of<UserProvider>(context, listen: false)
+                  .user
+                  .token, // Replace with the actual authentication token
+            };
+            Provider.of<SocketIOProvider>(context, listen: false)
+                .getSocket()
+                .emit('set_video_call_request', data);
+            // print("call end");
+            // print(event);
+            defaultAction();
           },
-          
         ),
         onDispose: () {},
         appID: 299445426,
         appSign:
-            "bdf09171e088264c85c6c3d52d8308ab014dfb73304c5b8964ae48fe35edc83d", //*input your AppSign*/,
+            "bdf09171e088264c85c6c3d52d8308ab014dfb73304c5b8964ae48fe35edc83d",
         userID: Provider.of<UserProvider>(context, listen: false).user.id,
         userName: Provider.of<UserProvider>(context, listen: false).user.name,
         callID: widget.callID,

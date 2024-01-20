@@ -1,6 +1,6 @@
 import 'package:carecompass/features/account/services/account_services.dart';
 import 'package:carecompass/features/account/widgets/account_button.dart';
-import 'package:carecompass/recharge.dart';
+import 'package:carecompass/features/account/screens/recharge.dart';
 import 'package:flutter/material.dart';
 
 class TopButtons extends StatelessWidget {

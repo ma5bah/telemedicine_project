@@ -14,11 +14,12 @@ class UserProvider extends ChangeNotifier {
     address: '',
     type: UserType.USER,
     token: '',
+    balance: 0,
     cart: [],
   );
 
   User get user => _user;
-
+  
   void setUser(String user) {
     _user = User.fromJson(user);
     notifyListeners();
@@ -29,19 +30,4 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> handleCallEnd(String appointment_id) async {
-    final url =
-        Uri.parse('$uri/telemedicine_api/set_start_consultation_request');
-    final response = await http.post(url,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': user.token
-        },
-        body: json.encode({
-          "chat_id": appointment_id,
-          "start_consultation_request": false,
-        }));
-    final responseData = json.decode(response.body);
-    // Handle the response as needed
-  }
 }

@@ -1,3 +1,5 @@
+import 'package:carecompass/common/widgets/bottom_bar.dart';
+import 'package:carecompass/common/widgets/custom_button.dart';
 import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/features/admin/screens/analtyics_screen.dart';
 import 'package:carecompass/features/admin/screens/orders_screen.dart';
@@ -48,7 +50,13 @@ class _AdminScreenState extends State<AdminScreen> {
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
-              )
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const BottomBar()));
+                  },
+                  child: Text("Switch to User"))
             ],
           ),
         ),

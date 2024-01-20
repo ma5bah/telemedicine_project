@@ -1,4 +1,5 @@
 import 'package:carecompass/constants/global_variables.dart';
+import 'package:carecompass/features/account/screens/profile_section.dart';
 import 'package:carecompass/features/account/widgets/below_app_bar.dart';
 import 'package:carecompass/features/account/widgets/orders.dart';
 import 'package:carecompass/features/account/widgets/top_buttons.dart';
@@ -21,6 +22,7 @@ class AccountScreen extends StatelessWidget {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              const Text("Care Compass"),
               Container(
                 padding: const EdgeInsets.only(left: 15, right: 15),
                 child: const Row(
@@ -43,6 +45,8 @@ class AccountScreen extends StatelessWidget {
         children: const [
           BelowAppBar(),
           SizedBox(height: 10),
+          ProfileSection(),
+          SizedBox(height: 20),
           TopButtons(),
           SizedBox(height: 20),
           Orders(),

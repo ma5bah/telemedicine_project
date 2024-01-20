@@ -30,6 +30,7 @@ class AuthService {
         address: '',
         type: UserType.USER,
         token: '',
+        balance: 0,
         cart: [],
       );
 
@@ -85,12 +86,16 @@ class AuthService {
           Provider.of<SocketIOProvider>(context, listen: false).initSocket(
               Provider.of<UserProvider>(context, listen: false).user.id);
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  (jsonDecode(res.body)['type'] == UserType.ADMIN)
-                      ? AdminScreen()
-                      : BottomBar(),
-            ),
+            MaterialPageRoute(builder: (context) {
+              // print(jsonDecode(res.body)['type']);
+              // print(jsonDecode(res.body)['type'].runtimeType);
+              // print(UserType.ADMIN.index);
+              // print(UserType.ADMIN.index.runtimeType);
+              // print(jsonDecode(res.body)['type'] == UserType.ADMIN.index);
+              return (jsonDecode(res.body)['type'] == UserType.ADMIN.index)
+                  ? const AdminScreen()
+                  : const BottomBar();
+            }),
           );
         },
       );

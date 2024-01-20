@@ -1,5 +1,6 @@
 import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/constants/utils.dart';
+import 'package:carecompass/features/account/screens/account_screen.dart';
 import 'package:carecompass/features/home/screens/home_screen.dart';
 import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -98,7 +99,7 @@ class _RechargeScreenState extends State<RechargeScreen> {
 Future<Map<String, dynamic>> addBalance(
     BuildContext context, String userId, int amount) async {
   // Replace this with your actual endpoint URL
-  final String apiUrl = 'https://$uri.com/admin/add_balance';
+  final String apiUrl = '$uri/admin/add_balance';
 
   final Map<String, dynamic> requestBody = {
     'user_id': userId,
@@ -120,8 +121,19 @@ Future<Map<String, dynamic>> addBalance(
     // Check if the request was successful (status code 200)
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      // print(userProvider.user
+      //     .copyWith(balance: amount + userProvider.user.balance)
+      //     .balance);
+      userProvider.setUser(userProvider.user
+          .copyWith(balance: amount + userProvider.user.balance)
+          .toJson());
+      // Provider.of<UserProvider>(context, listen: false).setUser(userProvider
+      //     .user
+      //     .copyWith(balance: amount + userProvider.user.balance)
+      //     .toString());
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => HomeScreen()));
+          .push(MaterialPageRoute(builder: (context) => AccountScreen()));
       return responseData;
     } else {
       // Handle API errors here

@@ -1,134 +1,15 @@
 import express from "express";
 
-const doctorRouter = express.Router();
 import auth from "../middlewares/auth";
 import Chat from "../models/chat";
-import mongoose, {Schema} from "mongoose";
 import Doctor from "../models/doctor";
 import User, {UserType} from "../models/user";
-import WaitingQueue from "../models/appointment";
 import Appointment from "../models/appointment";
 import admin from "../middlewares/admin";
 import message, {MessageType} from "../models/message";
 import Message from "../models/message";
-import doctor from "../models/doctor";
-// import  from "mongodb";
 
-
-doctorRouter.post("/doctor_api/start_consult", auth, async (req, res) => {
-    const doctor_profile = await Doctor.findOne({
-        userId: req.user
-    })
-    if (!doctor_profile) return res.status(400).send("Doctor not found");
-    const list_of_patients = await WaitingQueue.find({
-        doctorId: doctor_profile.userId.toString(),
-        lastActive: {
-            $lt: Date.now() - 2 * 60 * 1000
-        }
-    }).sort({createdAt: "descending"});
-    return res.send(list_of_patients);
-    // doctor_profile.onConsultation = true;
-    // const real_queue = doctor_profile.waitingQueue;
-    //
-    // let temp_queue = [];
-    // let cnt = 0
-    // for (let i = 0; i < real_queue.length; i++) {
-    //     if (real_queue[i].isOnline) {
-    //         temp_queue.push({
-    //             ...real_queue[i],
-    //             serialNumber: cnt,
-    //         });
-    //         cnt++;
-    //     }
-    // }
-    // for (let i = 0; i < real_queue.length; i++) {
-    //     if (!real_queue[i].isOnline) {
-    //         temp_queue.push({
-    //             ...real_queue[i],
-    //             serialNumber: cnt,
-    //         });
-    //         cnt++
-    //     }
-    // }
-    // // @TODO: it is best make a separate waiting queue model and perform all the operations there
-    // const user_data = doctor_profile.waitingQueue[0];
-    // doctor_profile.withPatient = user_data.userId;
-    // await doctor_profile.save();
-    // let chat = await Chat.findOne({
-    //     $or: [
-    //         {user_one: req.user, user_two: user_data.userId},
-    //     ]
-    // });
-    // if (!chat) {
-    //     chat = new Chat({
-    //         user_one: doctor_profile.userId,
-    //         user_two: user_data.userId,
-    //         messages: [],
-    //     })
-    //     await chat.save();
-    // }
-    // chat.messages.push({
-    //     sender: doctor_profile.userId,
-    //     receiver: user_data.userId,
-    //     message: "Consultation started",
-    //     timestamp: Date.now(),
-    // });
-    // await chat.save();
-
-    // @TODO: send notification to user
-    // @TODO: can we ensure that user is online?
-})
-doctorRouter.post("/doctor_api/accept_consult", auth, async (req, res) => {
-})
-doctorRouter.post("/doctor_api/end_consult", auth, async (req, res) => {
-})
-doctorRouter.post("/doctor_api/request_consult", auth, async (req, res) => {
-    const user_data = await User.findOne({
-        _id: req.user
-    })
-    if (!user_data) return res.status(400).send("User not found");
-    const list_of_appointments = await Appointment.find({
-        userId: req.user
-    })
-    for (let i = 0; i < list_of_appointments.length; i++) {
-        let doctor_data = await Doctor.findOne({
-            _id: list_of_appointments[i].doctorId
-        })
-        if (!doctor_data) continue;
-
-        if (!doctor_data.onConsultation && doctor_data.isOnline) {
-            doctor_data.waitingQueue.push({
-                userId: req.user,
-                doctorId: list_of_appointments[i].doctorId,
-                createdAt: list_of_appointments[i].createdAt,
-                lastActive: Date.now()
-            })
-            await doctor_data.save();
-        }
-    }
-
-})
-doctorRouter.get("/doctor_api/get_waiting_serial_number", auth, async (req, res) => {
-    const appointment_data = await Appointment.findOne({
-        shouldGetDoneWithin: {
-            $gt: Date.now()
-        },
-        isDone: false,
-        userId: req.user
-    })
-    if (!appointment_data) return res.status(400).send("Appointment not found");
-    let serialNumber = -1;
-    await Appointment.countDocuments({
-        createdAt: {
-            $lt: appointment_data.createdAt
-        }
-    }, (err: any, count: number) => {
-        if (err) return res.status(400).send("Error in fetching serial number");
-        serialNumber = count;
-    })
-
-    return res.send({serialNumber: serialNumber});
-})
+const doctorRouter = express.Router();
 
 
 doctorRouter.post("/doctor_api/set_user_online", auth, async (req, res) => {
@@ -146,26 +27,9 @@ doctorRouter.post("/doctor_api/set_user_online", auth, async (req, res) => {
         return res.status(400).send(error.message);
     }
 })
-doctorRouter.get("/doctor_api/get_user_online_list", auth, async (req, res) => {
-    try {
-        const appointment_data = await Appointment.find({
-            doctorId: req.user,
-        }).sort({
-            createdAt: "descending"
-        }).limit(20)
-        return res.send({
-            appointment_data: appointment_data
-        })
-    } catch (error: any) {
-        return res.status(400).send(error.message);
-    }
-})
 
 
-// doctorRouter.post("/doctor_api/get_all_doctor", async (req, res) => {
-//     const doctor_data = await Doctor.find({})
-//     return res.send(doctor_data);
-// })
+
 
 doctorRouter.post("/doctor_api/search_doctor_by_category", auth, async (req, res) => {
     const {category} = req.body;

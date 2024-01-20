@@ -5,6 +5,7 @@ import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/features/telemedicine/screens/video_call_screen.dart';
 import 'package:carecompass/features/telemedicine/widget/appointment_card.dart';
 import 'package:carecompass/models/appointment.dart';
+import 'package:carecompass/providers/socket_provider.dart';
 import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -19,7 +20,6 @@ class InboxScreen extends StatefulWidget {
 }
 
 class _InboxScreenState extends State<InboxScreen> {
-  Timer? _messageFetchTimer;
   ValueNotifier<bool> specialConditionFlag =
       ValueNotifier(false); // Step 1: Use ValueNotifier
   String _callID = "";
@@ -27,43 +27,20 @@ class _InboxScreenState extends State<InboxScreen> {
   @override
   void initState() {
     super.initState();
-    
-    _messageFetchTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      final url = Uri.parse('$uri/telemedicine_api/inbox');
-      final response = await http.get(url, headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': userProvider.user.token
-      });
-      final responseData = json.decode(response.body);
-      if (responseData.runtimeType == List) {
-        if (specialConditionFlag.value) {
-          specialConditionFlag.value = false;
-        }
-        var flag = false;
-        for (var index = 0; index < responseData.length; index++) {
-          if (responseData[index]["start_consultation_request_by_doctor"] ==
-              true) {
-            flag = true;
-            _callID = responseData[index]["_id"];
-            _userName =
-                responseData[index]['user_one']["_id"] == userProvider.user.id
-                    ? responseData[index]['user_two']["name"]
-                    : responseData[index]['user_one']["name"];
-            print(_callID);
-          }
-        }
-        if (flag != specialConditionFlag.value) {
-          specialConditionFlag.value = flag;
-        }
-      }
-      // setState(() {});
+
+    Provider.of<SocketIOProvider>(context, listen: false)
+        .getSocket()
+        .on("got_video_call_request", (data) {
+      print("object");
+      print(data);
+      _userName = data['userName'];
+      _callID = data['callID'];
+      specialConditionFlag.value = data['startConsultationRequest'];
     });
   }
 
   @override
   void dispose() {
-    _messageFetchTimer?.cancel();
     super.dispose();
   }
 

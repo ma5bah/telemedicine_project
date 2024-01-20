@@ -30,7 +30,7 @@ enum SocketEvents {
     SEND_MESSAGE = 'send_message',
     GET_MESSAGE_RESPONSE = 'get_message_response',
     SET_VIDEO_CALL_REQUEST = 'set_video_call_request',
-    SEND_VIDEO_CALL_REQUEST = 'send_video_call_request',
+    GOT_VIDEO_CALL_REQUEST = 'got_video_call_request',
 }
 
 io.on('connection', (socket) => {
@@ -152,6 +152,7 @@ io.on('connection', (socket) => {
         }
     });
     socket.on(SocketEvents.SET_VIDEO_CALL_REQUEST, async (socketData) => {
+        console.log(socketData);
         // Extract required data from the incoming request
         const {chatId, startConsultationRequest, authToken} = socketData;
         if (!chatId || typeof startConsultationRequest !== 'boolean' || !authToken) {
@@ -178,9 +179,28 @@ io.on('connection', (socket) => {
             return;
         }
         try {
-            const chat_data = await Chat.findByIdAndUpdate(chatId, {
+            const chat_data = await Chat.findById(chatId);
+            if (!chat_data) {
+                socket.emit(SocketEvents.ERROR_EVENT, 'Chat not found');
+                return;
+            }
+            // check updated_at is less than 5 minutes
+            if(startConsultationRequest===false&&chat_data.updated_at.getTime()>(Date.now()-2*60*1000)){
+                await Appointment.findOneAndUpdate({
+                    doctorId: chat_data.user_one._id,
+                    userId: chat_data.user_two._id,
+                    isDone: false,
+                    shouldGetDoneWithin: {$gt: Date.now()}
+                }, {
+                    $set: {
+                        isDone: true
+                    }
+                })
+            }
+            await Chat.findByIdAndUpdate(chatId, {
                 $set: {
                     start_consultation_request_by_doctor: startConsultationRequest,
+                    updated_at: new Date(Date.now()),
                 },
             })
                 .populate({
@@ -193,14 +213,12 @@ io.on('connection', (socket) => {
                     socket.emit(SocketEvents.ERROR_EVENT, 'Error updating chat');
                     return;
                 });
-            if (!chat_data) {
-                socket.emit(SocketEvents.ERROR_EVENT, 'Chat not found');
-                return;
-            }
-            socket.to(chat_data.user_two._id.toString()).emit(SocketEvents.SEND_VIDEO_CALL_REQUEST, {
+            console.log(chat_data.user_one._id.toString(),chat_data.user_two._id.toString())
+            socket.to(chat_data.user_one._id.toString()).to(chat_data.user_two._id.toString()).emit(SocketEvents.GOT_VIDEO_CALL_REQUEST, {
                 // @ts-ignore
                 "userName": chat_data.user_one.name,
                 "callID": chat_data._id,
+                "startConsultationRequest": startConsultationRequest,
             });
         } catch (error) {
             console.error(error);

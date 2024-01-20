@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 enum UserType {
   USER,
@@ -14,6 +15,7 @@ class User {
   final String address;
   final UserType type;
   final String token;
+  final int balance;
   final List<dynamic> cart;
 
   User({
@@ -25,6 +27,7 @@ class User {
     required this.type,
     required this.token,
     required this.cart,
+    required this.balance,
   });
 
   Map<String, dynamic> toMap() {
@@ -37,6 +40,7 @@ class User {
       'type': type.index,
       'token': token,
       'cart': cart,
+      'balance': balance,
     };
   }
 
@@ -49,6 +53,7 @@ class User {
       address: map['address'] ?? '',
       type: convertStringToUserType(map['type']),
       token: map['token'] ?? '',
+      balance: map['balance'] ?? 0.0,
       cart: List<Map<String, dynamic>>.from(
         map['cart']?.map(
           (x) => Map<String, dynamic>.from(x),
@@ -69,6 +74,7 @@ class User {
     String? address,
     UserType? type,
     String? token,
+    int? balance,
     List<dynamic>? cart,
   }) {
     return User(
@@ -80,6 +86,7 @@ class User {
       type: type ?? this.type,
       token: token ?? this.token,
       cart: cart ?? this.cart,
+      balance: balance ?? this.balance,
     );
   }
 }

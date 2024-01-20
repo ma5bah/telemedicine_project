@@ -16,7 +16,7 @@ class AppointmentCard extends StatelessWidget {
 
   const AppointmentCard({Key? key, required this.appointment})
       : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -30,7 +30,7 @@ class AppointmentCard extends StatelessWidget {
               child: userProvider.user.type == UserType.DOCTOR
                   ? Text(
                       "${appointment.name} serial: ${appointment.serialNumber == -1 ? "X" : appointment.serialNumber}")
-                  : Text("${appointment.name}"),
+                  : Text(appointment.name),
             ),
             const SizedBox(width: 80),
             InkWell(
@@ -43,7 +43,7 @@ class AppointmentCard extends StatelessWidget {
             const SizedBox(width: 13),
             userProvider.user.type == UserType.DOCTOR
                 ? InkWell(
-                    onTap: () async {
+                    onTap: () {
                       final data = {
                         'chatId': appointment
                             .id, // Replace with the actual receiver's user ID
