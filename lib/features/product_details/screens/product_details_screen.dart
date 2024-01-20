@@ -112,7 +112,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             width: 1,
                           ),
                         ),
-
                         hintStyle: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 17,
@@ -213,13 +212,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Container(
               color: Colors.black12,
               height: 5,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: CustomButton(
-                text: 'Buy Now',
-                onTap: () {},
-              ),
             ),
             const SizedBox(height: 10),
             Padding(

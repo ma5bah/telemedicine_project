@@ -105,7 +105,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             width: 1,
                           ),
                         ),
-
                         hintStyle: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 17,
@@ -231,6 +230,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       return CustomButton(
                         text: 'Done',
                         onTap: () => changeOrderStatus(details.currentStep),
+                        color: Colors.blue,
                       );
                     }
                     return const SizedBox();

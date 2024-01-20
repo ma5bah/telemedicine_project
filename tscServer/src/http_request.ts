@@ -7,7 +7,7 @@ import Doctor from "./models/doctor";
 import mongoose from "mongoose";
 import Message from "./models/message";
 import Chat from "./models/chat";
-
+import io from 'socket.io-client';
 
 const main = async () => {
 
@@ -21,20 +21,29 @@ const main = async () => {
             console.log(e);
         });
     try {
-        // const doc_data = data_json[i];
-        // const email = doc_data.name.replace(/\s/g, "").toLowerCase() + "@gmail.com";
-        const password = "Test@123";
-        const regex = new RegExp("Specialist", 'i') // i for case insensitive
-        const chats = await Chat.find({
-                user_one: "659bf115ac9d72ded814e46a",
-            }
-        )
-        console.log(chats);
+        const externalSocket = io("http://192.168.0.100:3000");
+        externalSocket.on('connect', () => {
+            console.log('Connected to server');
+
+            // Send a message to the server when connected
+            externalSocket.emit('chat message', 'Hello from external client');
+        });
+
+        externalSocket.on('chat message', (msg: string) => {
+            console.log('Received message from server:', msg);
+        });
+
+        externalSocket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+        setTimeout(() => {
+            externalSocket.emit('chat message', 'Delayed message from external client');
+        }, 3000);
     } catch (e) {
         console.error(e)
     }
 }
 main().then(r => {
-    console.log("Done")
+    // console.log("Done")
     process.exit()
 });

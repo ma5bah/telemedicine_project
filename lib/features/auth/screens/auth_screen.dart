@@ -2,7 +2,10 @@ import 'package:carecompass/common/widgets/custom_button.dart';
 import 'package:carecompass/common/widgets/custom_textfield.dart';
 import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/features/auth/services/auth_service.dart';
+import 'package:carecompass/providers/socket_provider.dart';
+import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 enum Auth {
   signin,
@@ -47,8 +50,8 @@ class _AuthScreenState extends State<AuthScreen> {
     authService.signInUser(
         context: context,
         email: globalEnvironment == Environment.testing
-            ? "dr.syedabdulkader@gmail.com"
-            // ? "masbahuddin60@gmail.com"
+            // ? "dr.sanjidaahmed@gmail.com"
+            ? "masbahuddin@gmail.com"
             // ? "test1@gmail.com"
             : _emailController.text,
         password: globalEnvironment == Environment.testing

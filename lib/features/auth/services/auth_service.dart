@@ -6,6 +6,7 @@ import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/constants/utils.dart';
 import 'package:carecompass/features/admin/screens/admin_screen.dart';
 import 'package:carecompass/models/user.dart';
+import 'package:carecompass/providers/socket_provider.dart';
 import 'package:carecompass/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -81,6 +82,8 @@ class AuthService {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           Provider.of<UserProvider>(context, listen: false).setUser(res.body);
           await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
+          Provider.of<SocketIOProvider>(context, listen: false).initSocket(
+              Provider.of<UserProvider>(context, listen: false).user.id);
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) =>

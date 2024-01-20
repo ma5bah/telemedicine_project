@@ -90,21 +90,22 @@ class _InboxScreenState extends State<InboxScreen> {
         // print(responseData[index]["start_consultation_request_by_doctor"]);
         // print(responseData[index]["_id"]);
         return Appointment(
-          id: responseData[index]['_id'],
-          serialNumber: responseData[index]['serialNumber'],
-          start_consultation_request_by_doctor: responseData[index]
-              ['start_consultation_request_by_doctor'],
-          userId: userProvider.user.id == responseData[index]['user_one']["_id"]
-              ? responseData[index]['user_two']["_id"]
-              : responseData[index]['user_one']["_id"],
-          name: userProvider.user.id == responseData[index]['user_one']["_id"]
-              ? responseData[index]['user_two']["name"]
-              : responseData[index]['user_one']["name"],
-          appointmentTime: "2021-09-01T12:00:00.000Z",
-          image_url: responseData[index]['user_one']["doctor_data"]
-                  ["image_url"] ??
-              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-        );
+            id: responseData[index]['_id'],
+            serialNumber: responseData[index]['serialNumber'],
+            start_consultation_request_by_doctor: responseData[index]
+                ['start_consultation_request_by_doctor'],
+            userId:
+                userProvider.user.id == responseData[index]['user_one']["_id"]
+                    ? responseData[index]['user_two']["_id"]
+                    : responseData[index]['user_one']["_id"],
+            name: userProvider.user.id == responseData[index]['user_one']["_id"]
+                ? responseData[index]['user_two']["name"]
+                : responseData[index]['user_one']["name"],
+            appointmentTime: "2021-09-01T12:00:00.000Z",
+            image_url: userProvider.user.id ==
+                    responseData[index]['user_one']["_id"]
+                ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                : responseData[index]['user_one']["doctor_data"]["image_url"]);
       });
     }
     return [];

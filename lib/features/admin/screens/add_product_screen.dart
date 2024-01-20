@@ -185,6 +185,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 CustomButton(
                   text: 'Sell',
                   onTap: sellProduct,
+                                  color: Colors.blue,
                 ),
               ],
             ),

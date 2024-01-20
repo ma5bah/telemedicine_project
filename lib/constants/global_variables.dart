@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-var globalEnvironment = Environment.production; // LineToRemove
+var globalEnvironment = Environment.testing; // LineToRemove
 
 enum Environment {
   testing,
   production,
 }
 
-// String uri = (globalEnvironment == Environment.testing)
-//     ? 'http://192.168.0.101:3000'
-//     : 'http://4.194.212.45:9999';
-String uri = 'http://192.168.0.101:3000';
+String uri = (globalEnvironment == Environment.testing)
+    ? 'http://192.168.0.100:3000'
+    : 'http://4.194.212.45:9999';
+// String uri = 'http://4.194.212.45:9999';
 
 class GlobalVariables {
   // COLORS

@@ -55,7 +55,7 @@ inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
     // console.log(chats);
     let chat_data = [];
     for (let chat of chats) {
-        console.log(chat);
+        // console.log(chat);
         let appointment = await Appointment.findOne({
             doctorId: chat.user_one._id,
             userId: chat.user_two._id,
@@ -70,11 +70,15 @@ inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
             });
             // chat_data.push(chat);
         } else {
+            // console.log(appointment.createdAt);
             let serialNumber = await Appointment.countDocuments({
                 createdAt: {
                     $lt: appointment.createdAt
                 },
                 doctorId: appointment.doctorId,
+                userId: {
+                    $ne: appointment.userId,
+                },
                 shouldGetDoneWithin: {
                     $gt: Date.now()
                 },
@@ -87,7 +91,7 @@ inboxRouter.get("/telemedicine_api/inbox", auth, async (req, res) => {
             });
         }
     }
-    // console.log("chat_data", chat_data);
+    // console.log("chat_data", chat_data.map(d=>d.serialNumber));
     return res.send(chat_data);
 });
 inboxRouter.post("/telemedicine_api/send_message", auth, async (req, res) => {

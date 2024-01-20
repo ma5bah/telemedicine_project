@@ -18,7 +18,7 @@ class _AdminScreenState extends State<AdminScreen> {
 
   List<Widget> pages = [
     const PostsScreen(),
-    const AnalyticsScreen(),
+    // const AnalyticsScreen(),
     const OrdersScreen(),
   ];
 
@@ -83,26 +83,26 @@ class _AdminScreenState extends State<AdminScreen> {
             label: '',
           ),
           // ANALYTICS
-          BottomNavigationBarItem(
-            icon: Container(
-              width: bottomBarWidth,
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: _page == 1
-                        ? GlobalVariables.selectedNavBarColor
-                        : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
-                ),
-              ),
-              child: const Icon(
-                Icons.analytics_outlined,
-              ),
-            ),
-            label: '',
-          ),
-          // ORDERS
+          // BottomNavigationBarItem(
+          //   icon: Container(
+          //     width: bottomBarWidth,
+          //     decoration: BoxDecoration(
+          //       border: Border(
+          //         top: BorderSide(
+          //           color: _page == 1
+          //               ? GlobalVariables.selectedNavBarColor
+          //               : GlobalVariables.backgroundColor,
+          //           width: bottomBarBorderWidth,
+          //         ),
+          //       ),
+          //     ),
+          //     child: const Icon(
+          //       Icons.analytics_outlined,
+          //     ),
+          //   ),
+          //   label: '',
+          // ),
+          // // ORDERS
           BottomNavigationBarItem(
             icon: Container(
               width: bottomBarWidth,

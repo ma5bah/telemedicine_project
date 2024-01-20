@@ -27,30 +27,30 @@ productRouter.get("/api/products/search/:name", auth, async (req, res) => {
 });
 
 // create a post request route to rate the product.
-// productRouter.post("/api/rate-product", auth, async (req, res) => {
-//   try {
-//     const { id, rating } = req.body;
-//     let product = await Product.findById(id);
-//
-//     for (let i = 0; i < product.ratings.length; i++) {
-//       if (product.ratings[i].userId === req.user) {
-//         product.ratings.splice(i, 1);
-//         break;
-//       }
-//     }
-//
-//     const ratingSchema = {
-//       userId: req.user,
-//       rating,
-//     };
-//
-//     product.ratings.push(ratingSchema);
-//     product = await product.save();
-//     res.json(product);
-//   } catch (e) {
-//     res.status(500).json({ error: e.message });
-//   }
-// });
+productRouter.post("/api/rate-product", auth, async (req, res) => {
+  try {
+    const { id, rating } = req.body;
+    let product = await Product.findById(id);
+    if(!product) throw new Error("Product not found");
+    for (let i = 0; i < product.ratings.length; i++) {
+      if (product.ratings[i].userId === req.user) {
+        product.ratings.splice(i, 1);
+        break;
+      }
+    }
+
+    const ratingSchema = {
+      userId: req.user,
+      rating,
+    };
+
+    product.ratings.push(ratingSchema);
+    product = await product.save();
+    res.json(product);
+  } catch (e:any) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
 productRouter.get("/api/deal-of-day", auth, async (req, res) => {
   try {

@@ -26,7 +26,10 @@ class AppointmentCard extends StatelessWidget {
           children: [
             Expanded(
               // Wrap this around the Text widget
-              child: Text(appointment.name),
+              child: userProvider.user.type == UserType.DOCTOR
+                  ? Text(
+                      "${appointment.name} serial: ${appointment.serialNumber == -1 ? "X" : appointment.serialNumber}")
+                  : Text("${appointment.name}"),
             ),
             const SizedBox(width: 80),
             InkWell(
@@ -64,7 +67,8 @@ class AppointmentCard extends StatelessWidget {
                     child: const Icon(Icons.video_call),
                   )
                 : InkWell(
-                    child: Text("${appointment.serialNumber}"),
+                    child: Text(
+                        "${appointment.serialNumber == -1 ? "X" : appointment.serialNumber}"),
                   ),
           ],
         ),

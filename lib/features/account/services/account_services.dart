@@ -28,6 +28,14 @@ class AccountServices {
         context: context,
         onSuccess: () {
           for (int i = 0; i < jsonDecode(res.body).length; i++) {
+            // print(jsonDecode(res.body)[i]);
+            print(jsonEncode(jsonDecode(res.body)[i]));
+            var order = Order.fromJson(
+              jsonEncode(
+                jsonDecode(res.body)[i],
+              ),
+            );
+            print(order.totalPrice);
             orderList.add(
               Order.fromJson(
                 jsonEncode(

@@ -21,7 +21,7 @@ class _CartScreenState extends State<CartScreen> {
     Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
   }
 
-  void navigateToAddress(int sum) {
+  void navigateToAddress(double sum) {
     Navigator.pushNamed(
       context,
       AddressScreen.routeName,
@@ -32,11 +32,12 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserProvider>().user;
-    int sum = 0;
-    user.cart
-        .map((e) => sum += e['quantity'] * e['product']['price'] as int)
-        .toList();
+    double sum = 0;
 
+    // user.cart
+    //     .map((e) => sum += e['quantity'] * e['product']['price'] as double)
+    //     .toList();
+    user.cart.map((e) => sum += e['quantity'] * e['product']['price']).toList();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),

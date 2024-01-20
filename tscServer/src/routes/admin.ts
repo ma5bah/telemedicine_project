@@ -5,9 +5,9 @@ import admin from "../middlewares/admin";
 import Product from "../models/product";
 import Order from "../models/order";
 import User from "../models/user";
-import health_category_json from "../../../assets/health_category.json"
+import auth from "./auth";
 
-adminRouter.post("/admin/add_balance", admin, async (req, res) => {
+adminRouter.post("/admin/add_balance", auth, async (req, res) => {
     try {
         const { user_id, amount } = req.body;
         if (!user_id) throw new Error("user id is required")

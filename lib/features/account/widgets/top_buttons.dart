@@ -1,5 +1,6 @@
 import 'package:carecompass/features/account/services/account_services.dart';
 import 'package:carecompass/features/account/widgets/account_button.dart';
+import 'package:carecompass/recharge.dart';
 import 'package:flutter/material.dart';
 
 class TopButtons extends StatelessWidget {
@@ -16,22 +17,15 @@ class TopButtons extends StatelessWidget {
               onTap: () {},
             ),
             AccountButton(
-              text: 'Turn Seller',
-              onTap: () {},
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            AccountButton(
               text: 'Log Out',
               onTap: () => AccountServices().logOut(context),
             ),
             AccountButton(
-              text: 'Your Wish List',
-              onTap: () {},
-            ),
+                text: 'Recharge',
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => RechargeScreen()));
+                })
           ],
         ),
       ],

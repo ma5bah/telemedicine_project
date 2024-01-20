@@ -1,19 +1,22 @@
-import 'package:carecompass/common/widgets/bottom_bar.dart';
 import 'package:carecompass/constants/global_variables.dart';
-import 'package:carecompass/features/admin/screens/admin_screen.dart';
 import 'package:carecompass/features/auth/screens/auth_screen.dart';
 import 'package:carecompass/features/auth/services/auth_service.dart';
-import 'package:carecompass/models/user.dart';
+import 'package:carecompass/onBoard.dart';
 import 'package:carecompass/providers/doctor_provider.dart';
+import 'package:carecompass/providers/socket_provider.dart';
 import 'package:carecompass/providers/user_provider.dart';
 import 'package:carecompass/router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (context) => UserProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (context) => SocketIOProvider(),
     ),
     ChangeNotifierProvider(
       create: (context) => DoctorSearchProvider(),
@@ -30,11 +33,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AuthService authService = AuthService();
-
   @override
   void initState() {
     super.initState();
     authService.getUserData(context);
+
   }
 
   @override
@@ -56,11 +59,9 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true, // can remove this line
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
-      home: Provider.of<UserProvider>(context).user.token.isNotEmpty
-          ? Provider.of<UserProvider>(context).user.type != UserType.ADMIN
-              ? const BottomBar()
-              : const AdminScreen()
-          : const AuthScreen(),
+      home: globalEnvironment == Environment.testing
+          ? const AuthScreen()
+          : onBoard(),
     );
   }
 }
