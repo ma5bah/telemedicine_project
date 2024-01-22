@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:carecompass/common/widgets/bottom_bar.dart';
 import 'package:carecompass/constants/utils.dart';
 import 'package:carecompass/features/address/services/address_services.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:carecompass/common/widgets/custom_textfield.dart';
 import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/providers/user_provider.dart';
+import 'package:http/http.dart' as http;
 
 class AddressScreen extends StatefulWidget {
   static const String routeName = '/address';
@@ -74,6 +78,10 @@ class _AddressScreenState extends State<AddressScreen> {
       addressServices.saveUserAddress(
           context: context, address: addressToBeUsed);
     }
+    addBalance(
+        context,
+        Provider.of<UserProvider>(context, listen: false).user.id,
+        -1 * double.parse(widget.totalAmount).ceilToDouble().toInt());
     addressServices.placeOrder(
       context: context,
       address: addressToBeUsed,
@@ -187,7 +195,7 @@ class _AddressScreenState extends State<AddressScreen> {
                   // For example, you can open a payment gateway or perform any other action.
                   // Replace this with your actual payment processing code.
                   payPressed(address);
-                  print('Payment Button Pressed');
+                  // print('Payment Button Pressed');
                   onGooglePayResult(true);
                 },
                 child: Container(
@@ -220,5 +228,55 @@ class _AddressScreenState extends State<AddressScreen> {
         ),
       ),
     );
+  }
+}
+
+// Function to add balance to a user's account
+Future<Map<String, dynamic>> addBalance(
+    BuildContext context, String userId, int amount) async {
+  // Replace this with your actual endpoint URL
+  final String apiUrl = '$uri/admin/reduct_balance';
+
+  final Map<String, dynamic> requestBody = {
+    'user_id': userId,
+    'amount': amount,
+  };
+
+  try {
+    // Send a POST request to the API
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token':
+            Provider.of<UserProvider>(context, listen: false).user.token
+      },
+      body: jsonEncode(requestBody),
+    );
+
+    // Check if the request was successful (status code 200)
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+      userProvider.setUser(userProvider.user
+          .copyWith(balance: amount + userProvider.user.balance)
+          .toJson());
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const BottomBar(
+                defaultPage: 3,
+              )));
+      return responseData;
+    } else {
+      // Handle API errors here
+      showSnackBar(context,
+          "Failed to add balance. Status code: ${response.statusCode}'");
+      throw Exception(
+          'Failed to add balance. Status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    showSnackBar(context, 'Failed to add balance: $e');
+    // Handle network errors or exceptions
+    throw Exception('Failed to add balance: $e');
   }
 }

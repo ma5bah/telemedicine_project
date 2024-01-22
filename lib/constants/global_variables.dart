@@ -10,7 +10,7 @@ enum Environment {
 String uri = (globalEnvironment == Environment.testing)
     ? 'http://192.168.0.108:3000'
     : 'http://4.194.212.45:9999';
-// String uri = 'http://192.168.0.101:3000';
+// String uri = 'http://4.194.212.45:9999';
 
 class GlobalVariables {
   // COLORS

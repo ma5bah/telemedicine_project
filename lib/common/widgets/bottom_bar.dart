@@ -11,14 +11,28 @@ import 'package:provider/provider.dart';
 
 class BottomBar extends StatefulWidget {
   static const String routeName = '/actual-home';
-  const BottomBar({Key? key}) : super(key: key);
+  // get a default parameter
+  final int defaultPage;
+  const BottomBar({
+    Key? key,
+    this.defaultPage = 0,
+  }) : super(key: key);
+  // const BottomBar({Key? key}) : super(key: key);
 
   @override
   State<BottomBar> createState() => _BottomBarState();
 }
 
 class _BottomBarState extends State<BottomBar> {
+  // access default parameter
+
   int _page = 0;
+  @override
+  void initState() {
+    super.initState();
+    _page = widget.defaultPage;
+  }
+
   double bottomBarWidth = 42;
   double bottomBarBorderWidth = 5;
 

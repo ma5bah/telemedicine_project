@@ -70,7 +70,7 @@ class _CategoryDealsScreenState extends State<CategoryDealsScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 170,
+                  height: 190,
                   child: GridView.builder(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.only(left: 15),
@@ -117,10 +117,30 @@ class _CategoryDealsScreenState extends State<CategoryDealsScreen> {
                                 top: 5,
                                 right: 15,
                               ),
-                              child: Text(
-                                product.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    product.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 5),
+                                  product.quantity.toInt() > 0
+                                      ? Text(
+                                          'In Stock: ${product.quantity.toInt()}',
+                                          style: const TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : Text(
+                                          'Out of Stock',
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                ],
                               ),
                             ),
                           ],

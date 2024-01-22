@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:carecompass/common/service/notification_service.dart';
 import 'package:carecompass/constants/global_variables.dart';
 import 'package:carecompass/features/telemedicine/screens/video_call_screen.dart';
 import 'package:carecompass/features/telemedicine/widget/appointment_card.dart';
@@ -31,10 +32,18 @@ class _InboxScreenState extends State<InboxScreen> {
     Provider.of<SocketIOProvider>(context, listen: false)
         .getSocket()
         .on("got_video_call_request", (data) {
-      print("object");
-      print(data);
+      // print("object");
+      // print(data);
       _userName = data['userName'];
       _callID = data['callID'];
+      if (specialConditionFlag.value != data['startConsultationRequest']) {
+        if (data['startConsultationRequest'] == true) {
+          showNotificationAndroid('Video Call', "$_userName is Calling you");
+        } else {
+          showNotificationAndroid(
+              'Video Call', "$_userName has ended the call");
+        }
+      }
       specialConditionFlag.value = data['startConsultationRequest'];
     });
   }

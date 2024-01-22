@@ -50,6 +50,7 @@ dependencies:
   flutter_styled_toast: ^2.2.1
   liquid_swipe: ^3.1.0
   socket_io_client: ^2.0.3+1
+  flutter_local_notifications: ^16.3.1+1
 
 
 

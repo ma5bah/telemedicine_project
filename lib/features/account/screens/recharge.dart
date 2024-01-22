@@ -122,16 +122,11 @@ Future<Map<String, dynamic>> addBalance(
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      // print(userProvider.user
-      //     .copyWith(balance: amount + userProvider.user.balance)
-      //     .balance);
+
       userProvider.setUser(userProvider.user
           .copyWith(balance: amount + userProvider.user.balance)
           .toJson());
-      // Provider.of<UserProvider>(context, listen: false).setUser(userProvider
-      //     .user
-      //     .copyWith(balance: amount + userProvider.user.balance)
-      //     .toString());
+
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => AccountScreen()));
       return responseData;

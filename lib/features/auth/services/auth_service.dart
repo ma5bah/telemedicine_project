@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:carecompass/common/service/notification_service.dart';
 import 'package:carecompass/common/widgets/bottom_bar.dart';
 import 'package:carecompass/constants/error_handling.dart';
 import 'package:carecompass/constants/global_variables.dart';
@@ -75,7 +76,7 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      print(res.body);
+      // print(res.body);
       httpErrorHandle(
         response: res,
         context: context,
@@ -83,8 +84,11 @@ class AuthService {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           Provider.of<UserProvider>(context, listen: false).setUser(res.body);
           await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
+          // TODO: init after login
           Provider.of<SocketIOProvider>(context, listen: false).initSocket(
               Provider.of<UserProvider>(context, listen: false).user.id);
+          LocalNotificationService().init();
+          // showNotificationAndroid("TESTing", "FIguring out");
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
               // print(jsonDecode(res.body)['type']);

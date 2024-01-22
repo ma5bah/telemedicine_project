@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import Message from "./models/message";
 import Chat from "./models/chat";
 import io from 'socket.io-client';
+import Product from './models/product';
 
 const main = async () => {
 
@@ -21,24 +22,7 @@ const main = async () => {
             console.log(e);
         });
     try {
-        const externalSocket = io("http://192.168.0.100:3000");
-        externalSocket.on('connect', () => {
-            console.log('Connected to server');
-
-            // Send a message to the server when connected
-            externalSocket.emit('chat message', 'Hello from external client');
-        });
-
-        externalSocket.on('chat message', (msg: string) => {
-            console.log('Received message from server:', msg);
-        });
-
-        externalSocket.on('disconnect', () => {
-            console.log('Disconnected from server');
-        });
-        setTimeout(() => {
-            externalSocket.emit('chat message', 'Delayed message from external client');
-        }, 3000);
+        await Product.updateMany({}, { $set: { "quantity": 1111111 } });
     } catch (e) {
         console.error(e)
     }

@@ -16,7 +16,7 @@ class AppointmentCard extends StatelessWidget {
 
   const AppointmentCard({Key? key, required this.appointment})
       : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -71,8 +71,8 @@ class AppointmentCard extends StatelessWidget {
         ),
         subtitle: Row(
           children: [
-            Text(appointment.id),
-            // Text(appointment.appointmentTime),
+            // Text(appointment.id),
+            Text(appointment.appointmentTime),
           ],
         ),
       ),

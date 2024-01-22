@@ -25,6 +25,9 @@ class _OrdersState extends State<Orders> {
 
   void fetchOrders() async {
     orders = await accountServices.fetchMyOrders(context: context);
+    // for (var order in orders!) {
+    //   if(order.products.)
+    // }
     setState(() {});
   }
 
@@ -83,7 +86,7 @@ class _OrdersState extends State<Orders> {
                         );
                       },
                       child: SingleProduct(
-                        image: orders![index].products[0].images[0],
+                        image: orders![index].products[0].images[0] ?? '',
                       ),
                     );
                   },
